@@ -1,0 +1,82 @@
+
+@{
+    var data = Model.Server;
+}
+using Abp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+namespace @{@data.Entity.Namespace}.DomainService
+{
+    /// <summary>
+    /// @{@data.Entity.EntityDisplayName}的领域服务方法
+    ///</summary>
+    public class @{@data.Entity.Name}Manager :AbpDomainService<@{@data.Entity.Name},@{@data.Entity.EntityKeyName}>, I@{@data.Entity.Name}Manager
+    {
+		
+ 
+		/// <summary>
+		/// @{@data.Entity.Name}的构造方法
+		/// 通过构造函数注册服务到依赖注入容器中
+		///</summary>
+	    public @{@data.Entity.Name}Manager(IServiceProvider serviceProvider) : base(serviceProvider)	
+        {
+			 
+		}
+
+		 
+		 
+		 
+        public async Task<@{@data.Entity.Name}> CreateAsync(@{@data.Entity.Name} entity)
+        {
+             entity.Id=   await EntityRepo.InsertAndGetIdAsync(entity);
+
+            return entity;
+        }
+
+        public async Task UpdateAsync(@{@data.Entity.Name} entity)
+        {
+            await EntityRepo.UpdateAsync(entity);
+        }
+
+        public async Task DeleteAsync(@{@data.Entity.EntityKeyName} id)
+        {
+            //TODO:删除前的逻辑判断，是否允许删除
+            await EntityRepo.DeleteAsync(id);
+        }
+
+        /// <summary>
+        /// 批量删除
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task BatchDelete(List<@{@data.Entity.EntityKeyName}> input)
+        {
+            //TODO:删除前的逻辑判断，是否允许删除
+            await EntityRepo.DeleteAsync(a => input.Contains(a.Id)); 
+        }
+
+	   public async Task<bool> IsExistAsync(@{@data.Entity.EntityKeyName} id)
+        {
+            var result = await EntityRepo.GetAll().AnyAsync(a => a.Id == id);
+            return result;
+        }
+			
+							//// custom codes
+									
+							
+							@{@ViewBag.OldCustomCode}
+							//// custom codes end
+
+
+
+		 
+		  
+		 
+
+	}
+}

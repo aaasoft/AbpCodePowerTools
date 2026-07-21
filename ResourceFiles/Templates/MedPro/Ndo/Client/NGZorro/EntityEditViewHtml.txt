@@ -1,0 +1,80 @@
+@using AbpDtoGenerator
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+@{
+    var data = Model.SPAClient;
+    var sharp = "#";
+
+}
+
+
+
+<!-- 表单验证提示 -->
+<ng-template #errorTpl let-control>
+  <validation-messages [formCtrl]="control"></validation-messages>
+</ng-template>
+<nz-spin [nzSpinning]="loading">
+
+<form nz-form #validateForm="ngForm" nzLayout="vertical" autocomplete="off">
+  <div class="card">
+    <nz-row [nzGutter]="24">
+      <nz-col [nzSm]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzRequired nzNoColon>{{ l('@{@data.Entity.Name}Name') }}</nz-form-label>
+          <!-- 绑定最上面的那个ng-template #errorTpl  -->
+          <nz-form-control [nzSpan]="24" [nzErrorTip]="errorTpl">
+            <g-name-input @sharp@{@data.Entity.LowerName}Input="ngModel" name="@{@data.Entity.LowerName}Name" [(ngModel)]="entity.@{@data.Entity.LowerName}Name" [placeholder]="l('@{@data.Entity.Name}Name')"></g-name-input>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+
+      <nz-col [nzSm]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24" nzNoColon>{{ l('Description') }}</nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <g-description-textarea
+              #descriptionInput="ngModel"
+              name="description"
+              [(ngModel)]="entity.description"
+              [placeholder]="l('Description')"
+            ></g-description-textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+  </div>
+  <!-- 这里引入一个表格，需要注意的是，表头th我们需要使用nzWidth给他固定一下宽度-->
+  <!-- 另外：这里的宽度固定为50%，因为这里只有2列-->
+  <g-collapse [header]="l('Fields.Tenant.BasicConfig')" [isActive]="true">
+   <!-- 自己增加逻辑吧。。。-->
+
+
+  </g-collapse>
+
+  <!-- 操作记录 -->
+  <g-collapse [header]="l('OperatingRecord')" [isActive]="false">
+    <ng-container>
+      <nz-row [nzGutter]="24">
+        <nz-col [nzSm]="6">
+          <!-- 创建人 -->
+          <nz-form-item>
+            <nz-form-label class="labelStyle" nzNoColon>{{ l('OperatingRecordCreatePeople') }} </nz-form-label>
+            <nz-form-control>
+              <span>{{ operationName }}</span>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzSm]="6">
+          <!-- 最近修改时间 -->
+          <nz-form-item>
+            <nz-form-label class="labelStyle" nzNoColon>{{ l('OperatingRecordCreateTime') }} </nz-form-label>
+            <nz-form-control>
+              <span> {{ operationTime | _moment: 'YYYY-MM-DD HH:mm:ss' }} </span>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+    </ng-container>
+  </g-collapse>
+</form>
+</nz-spin>

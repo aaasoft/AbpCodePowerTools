@@ -1,0 +1,152 @@
+
+@{
+    var data = Model.Server;
+}
+using Abp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp;
+using Abp.Timing;
+using Abp.UI;
+using GCT.Foundation;
+using Abp.Linq.Extensions;
+
+namespace @{@data.Entity.Namespace}.DomainService
+{
+    /// <summary>
+    /// @{@data.Entity.EntityDisplayName}的领域服务方法
+    ///</summary>
+    public class @{@data.Entity.Name}Manager :GuidRdoDomainService<@{@data.Entity.Name},@{@data.Entity.Name}Base>, I@{@data.Entity.Name}Manager
+    {
+
+        public @{@data.Entity.Name}Manager(IServiceProvider serviceProvider)
+            : base(serviceProvider)
+        {
+        }
+        /// <summary>
+        /// 将 rdo 添加到数据库
+        /// </summary>
+        /// <param name="rdo"></param>
+        /// <returns></returns>
+        public override async Task<@{@data.Entity.Name}> CreateRdo(@{@data.Entity.Name} rdo)
+        {
+            var res = await base.CreateRdo(rdo);
+            return res;
+        }
+
+        /// <summary>
+        /// 将 rdo 根据id，经过校验后删除
+        /// </summary>
+        /// <param name="id"> rdo id</param>
+        /// <returns></returns>
+        public override Task DeleteRdo(Guid id)
+        {
+            return base.DeleteRdo(id);
+        }
+
+
+        /// <summary>
+        /// 判断rdo是否可以创建或更新
+        /// </summary>
+        /// <param name="rdo"></param>
+        /// <param name="rdoBase"></param>
+        /// <returns></returns>
+        public override async Task ValidateRdoOnCreateOrUpdate(@{@data.Entity.Name} rdo, @{@data.Entity.Name}Base rdoBase)
+        {
+            // baseId = null 验证名称
+            // baseId !=null id =null  验证名称 验证版本
+            // baseId !=null id!=null  验证名称 验证版本
+
+            var entityBaseId = rdoBase?.Id;
+            var entityBaseName = rdoBase?.@{@data.Entity.Name}Name;
+
+            //RDO同名验证
+            var repetCount = await this.BaseQueryAsNoTracking.CountAsync(x =>
+                x.@{@data.Entity.Name}Name == entityBaseName &&
+                x.Id != entityBaseId);
+
+            if (repetCount >= 1)
+            {
+                this.ThrowRepetError(entityBaseName);
+            }
+
+            //RDO版本同名验证
+            if (entityBaseId != null)
+            {
+                var validateVersion = await QueryAsNoTracking
+                    .Where(x => x.@{@data.Entity.Name}Revision == rdo.@{@data.Entity.Name}Revision &&
+                                x.@{@data.Entity.Name}BaseId == rdo.@{@data.Entity.Name}BaseId && x.Id != rdo.Id)
+                    .CountAsync();
+
+                if (validateVersion >= 1)
+                {
+                    this.ThrowVersionToRepeat(rdo.@{@data.Entity.Name}Revision);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 判断rdo是否可以删除
+        /// </summary>
+        /// <param name="rdo"></param>
+        /// <returns></returns>
+        public override async Task ValidateRdoOnDelete(@{@data.Entity.Name} rdo)
+        {
+            var @{@data.Entity.LowerName} = rdo;
+            if (@{@data.Entity.LowerName} == null)
+            {
+                return;
+            }
+            var id = rdo.Id;
+
+            // 判断被其他引用
+
+        }
+
+        /// <summary>
+        /// 判断 rdo base 是否可以创建或修改
+        /// </summary>
+        /// <param name="rdoBase"></param>
+        /// <returns></returns>
+        public override Task ValidateBaseOnCreateOrUpdate(@{@data.Entity.Name}Base rdoBase)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 判断 rdo base 是否可以删除
+        /// </summary>
+        /// <param name="rdoBase"></param>
+        /// <returns></returns>
+        public override Task ValidateBaseOnDelete(@{@data.Entity.Name}Base rdoBase)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public override IQueryable<@{@data.Entity.Name}> GetRdoIncludeQuery()
+        {
+            return this.Query
+                 .Include(o => o.@{@data.Entity.Name}Base)
+                 .AsNoTracking();
+        }
+
+        /// <summary>
+        /// 根据id获取@{@data.Entity.Name}
+        /// </summary>
+        /// <param name="@{@data.Entity.LowerName}BaseId"></param>
+        /// <param name="@{@data.Entity.LowerName}Id"></param>
+        /// <returns></returns>
+        public async Task<@{@data.Entity.Name}> Get@{@data.Entity.Name}ById(Guid? @{@data.Entity.LowerName}BaseId, Guid? @{@data.Entity.LowerName}Id)
+        {
+            return await this.QueryAsNoTracking.Include(x => x.@{@data.Entity.Name}Base)
+                .WhereIf(@{@data.Entity.LowerName}BaseId != null, x => x.@{@data.Entity.Name}BaseId == @{@data.Entity.LowerName}BaseId)
+                .WhereIfThenElse(@{@data.Entity.LowerName}Id == null, x => x.Id == x.@{@data.Entity.Name}Base.RevOfRcdId, x => x.Id == @{@data.Entity.LowerName}Id)
+                .FirstOrDefaultAsync();
+        }
+	
+	}
+}

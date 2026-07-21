@@ -1,0 +1,247 @@
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+@{
+    var data = Model.SPAClient;
+}
+
+
+
+import { Component, OnInit, AfterViewInit, ViewChild, Injector } from '@@angular/core';
+import { PagedRequestDto } from '@@commercial/l-52abp-ng';
+import { GRdoPagedListingComponentBaseDirective } from '@@shared/component-base';
+import { GConsts } from '@@shared/components/AppConsts/g-consts';
+import { GCopyRdoComponent } from '@@shared/components/g-copy-rdo/g-copy-rdo.component';
+import { GCopyRevisionComponent } from '@@shared/components/g-copy-revision/g-copy-revision.component';
+import { RdoBaseDto } from '@@shared/service-proxies/api/RdoBaseDto';
+import { finalize } from 'rxjs/operators';
+import { IRdoBaseCopy } from '@@shared/components/g-copy-rdo';
+import { IRdoCopy } from '@@shared/components/g-copy-revision';
+import { CopyRdoDto } from '@@shared/service-proxies/api/CopyRdoDto';
+import { CopyRdoRevisionDto } from '@@shared/service-proxies/api/CopyRdoRevisionDto';
+import { @{@data.Entity.Name}ServiceProxy } from '@@shared/service-proxies/api/@{@data.Entity.Name}ServiceProxy';
+  
+
+
+@@Component({
+    selector: 'app-@{@data.Entity.LowerName}',
+    templateUrl: './@{@data.Entity.SplitName}.component.html',
+    styleUrls: ['./@{@data.Entity.SplitName}.component.less'],
+})
+
+
+export class  @{@data.Entity.Name}Component extends GRdoPagedListingComponentBaseDirective<RdoBaseDto> implements OnInit, AfterViewInit {
+  constructor(injector: Injector, private _@{@data.Entity.LowerName}ServiceProxy: @{@data.Entity.Name}ServiceProxy) {
+    super(injector, '@{@data.Entity.Namespace}.@{@data.Entity.Name}');
+  }
+
+  ngOnInit(): void {
+    // super.ngOnInit() 中将会调用 getBtnList 和 refresh 方法
+    super.ngOnInit();
+  }
+  ngAfterViewInit() {
+    // 模板中的元素已创建完成
+  }
+
+  protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: () => void): void {
+    this.loading = true;
+    this._@{@data.Entity.LowerName}ServiceProxy
+      .getRdoPaged(this.filterText, request.sorting, request.maxResultCount, request.skipCount)
+      .pipe(
+        finalize(() => {
+          finishedCallback();
+          this.loading = false;
+        }),
+      )
+      .subscribe((result) => {
+        this.dataList = result.items;
+        this.showPaging(result);
+      });
+  }
+
+  /** 动态获取按钮组 */
+  protected getBtnList() {
+    this.btnList = [
+      {
+        icon: GConsts.gicon.create,
+        text: GConsts.button.create,
+        eventName: GConsts.button.create,
+        display: this.isGranted('Pages.@{@data.Entity.Name}.Create'),
+      },
+      {
+        icon: GConsts.gicon.create,
+        text: GConsts.button.createVersion,
+        eventName: GConsts.button.createVersion,
+        display: this.isGranted('Pages.@{@data.Entity.Name}.Create') && this.rdoBaseId,
+      },
+      {
+        icon: GConsts.gicon.copy,
+        text: GConsts.button.copy,
+        eventName: GConsts.button.copy,
+        display: this.isGranted('Pages.@{@data.Entity.Name}.Copy') && this.rdoId,
+      },
+      {
+        icon: GConsts.gicon.copy,
+        text: GConsts.button.copyVersion,
+        eventName: GConsts.button.copyVersion,
+        display: this.isGranted('Pages.@{@data.Entity.Name}.Copy') && this.rdoId,
+      },
+      {
+        // type: 'danger',
+        icon: GConsts.gicon.delete,
+        text: GConsts.button.delete,
+        eventName: GConsts.button.delete,
+        display: this.isGranted('Pages.@{@data.Entity.Name}.Delete') && this.rdoBaseId && this.isRevOfRcdId,
+      },
+      {
+        // type: 'danger',
+        icon: GConsts.gicon.delete,
+        text: GConsts.button.deleteVersion,
+        eventName: GConsts.button.deleteVersion,
+        display: this.isGranted('Pages.@{@data.Entity.Name}.Delete') && this.rdoId && !this.isRevOfRcdId,
+      },
+      {
+        // type: 'danger',
+        icon: GConsts.gicon.gctzhuisu,
+        text: GConsts.button.modelAudit,
+        eventName: GConsts.button.modelAudit,
+        display: !!this.rdoId,
+      },
+      {
+        icon: GConsts.gicon.refresh,
+        text: GConsts.button.refresh,
+        eventName: GConsts.button.refresh,
+        display: this.isShowEdit,
+        alignRight: true,
+      },
+      {
+        type: 'primary',
+        icon: GConsts.gicon.save,
+        text: GConsts.button.save,
+        eventName: GConsts.button.save,
+        display: this.isShowEdit,
+        alignRight: true,
+      },
+    ];
+  }
+
+  /** 操作按钮点击事件 */
+  btnCallback(eventName: string) {
+    // 默认实现中已经处理了 create/createVersion/delete/refresh/save/copy/copyVersion/modelAudit
+  }
+
+  /** 复制 rdoBase + 当前选中的rdo */
+  copy() {
+    const data: IRdoBaseCopy = {
+      rdoId: this.rdoId,
+      name: '@{@data.Entity.Name}Name',
+      baseId: null,
+      value: null,
+      rdoValue: null,
+    };
+    // 从后端获取最新的数据
+    this.loading = true;
+    this._@{@data.Entity.LowerName}ServiceProxy
+      .getForEdit(this.rdoId)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe((res) => {
+        // 填充数据
+        data.baseId = res.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Base.id;
+        data.value = res.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Base.@{@data.Entity.LowerName}Name;
+        data.rdoValue = res.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Revision;
+
+        // 打开弹框,设置rdo copy框的数据
+        this.modalHelper.createStatic(GCopyRdoComponent, { entity: data }).subscribe((result) => {
+          if (result) {
+            const copyRdo: CopyRdoDto = result;
+            // 保存，调用复制方法
+            this.loading = true;
+            this._@{@data.Entity.LowerName}ServiceProxy
+              .copyRdo(result)
+              .pipe(finalize(() => (this.loading = false)))
+              .subscribe((result) => {
+                this.copySuccess(copyRdo.name, copyRdo.revision);
+                this.refreshGoFirstPage();
+              });
+          }
+        });
+      });
+  }
+
+  /** 复制 rdo */
+  copyVersion() {
+    const data: IRdoCopy = {
+      id: this.rdoId,
+      labelName: '@{@data.Entity.Name}Name',
+      value: null,
+      name: null,
+    };
+    this._@{@data.Entity.LowerName}ServiceProxy.getForEdit(this.rdoId).subscribe((res) => {
+      data.value = res.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Revision;
+      data.name = res.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Base.@{@data.Entity.LowerName}Name;
+      this.modalHelper.createStatic(GCopyRevisionComponent, { entity: data }).subscribe((result) => {
+        if (result) {
+          const copyRdoVersion: CopyRdoRevisionDto = result;
+          // 保存，调用复制方法
+          this.loading = true;
+          this._@{@data.Entity.LowerName}ServiceProxy
+            .copyRdoRevision(copyRdoVersion)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe((result) => {
+              this.copySuccess(data.name, copyRdoVersion.revision);
+              this.refreshGoFirstPage();
+            });
+        }
+      });
+    });
+  }
+
+  /** 删除Base */
+  deleteBase() {
+    abp.message.confirm(
+      this.l('ConfirmDelete'), // 确认提示
+      this.l('MessageWarn'), // 确认提示（可选参数）
+      (isConfirmed) => {
+        if (isConfirmed) {
+          this.loading = true;
+          this._@{@data.Entity.LowerName}ServiceProxy
+            .deleteBase(this.rdoBaseId)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe(() => {
+              // 消息提示
+              this.deleteSuccess();
+              // 刷新
+              this.refresh();
+            });
+        }
+      },
+    );
+  }
+
+  /** 删除版本 */
+  deleteRev() {
+    abp.message.confirm(
+      this.l('ConfirmDelete'), // 确认提示
+      this.l('MessageWarn'), // 确认提示（可选参数）
+      (isConfirmed) => {
+        if (isConfirmed) {
+          this.loading = true;
+          this._@{@data.Entity.LowerName}ServiceProxy
+            .delete(this.rdoId)
+            .pipe(finalize(() => (this.loading = false)))
+            .subscribe(() => {
+              // 消息提示
+              this.deleteSuccess();
+              // 刷新
+              this.refresh();
+            });
+        }
+      },
+    );
+  }
+
+
+
+
+
+
+
+}

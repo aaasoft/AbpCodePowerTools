@@ -1,0 +1,117 @@
+@using AbpDtoGenerator
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+    @model AbpDtoGenerator.GeneratorModels.ViewModel
+    @{
+    var data = Model.SPAClient;
+    var sharp = "#";
+
+}
+
+<!-- 表单输入错误模板 -->
+<ng-template #errorTpl let-control>
+  <validation-messages [formCtrl]="control"></validation-messages>
+</ng-template>
+
+<nz-spin [nzSpinning]="loading">
+    <form nz-form #validateForm="ngForm" nzLayout="vertical" autocomplete="off">
+      <div class="card">
+        <nz-row [nzGutter]="24">
+          <nz-col [nzSm]="6">
+            <!-- 名称 -->
+            <nz-form-item>
+              <nz-form-label class="labelStyle" nzRequired nzNoColon>{{ l('@{@data.Entity.Name}Name') }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="errorTpl">
+                <g-name-input
+                  name="@{@data.Entity.LowerName}Name"
+                  @sharp@{@data.Entity.LowerName}NameInput="ngModel"
+                  [(ngModel)]="entity.@{@data.Entity.LowerName}Base.@{@data.Entity.LowerName}Name"
+                  [placeholder]="l('@{@data.Entity.Name}Name')"
+                ></g-name-input>
+              </nz-form-control>
+            </nz-form-item>        
+            <nz-row class="special-row">
+              <nz-col [nzSm]="10">
+                <!-- 版本号 -->
+                <nz-form-item>
+                  <nz-form-control [nzErrorTip]="errorTpl">
+                    <input
+                      name="@{@data.Entity.LowerName}Revision"
+                      @sharp@{@data.Entity.LowerName}Revision="ngModel"
+                      nz-input
+                      [(ngModel)]="entity.@{@data.Entity.LowerName}Revision"
+                      [placeholder]="l('@{@data.Entity.Name}Revision')"
+                      maxlength="100"
+                      pattern="^[^\s]+(\s+[^\s]+)*$"
+                      required
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </nz-col>
+              <nz-col [nzSm]="14" class="special-col">
+                <nz-form-item>
+                  <!-- 是否设置默认 -->
+                  <nz-form-control>
+                    <label name="isRevOfRcdId" #isRevOfRcdIdInput="ngModel"       [disabled]="isRevOfRcdId" nz-checkbox [(ngModel)]="entity.isRevOfRcdId">
+                      {{ l('IsDefault') }}
+                    </label>
+                  </nz-form-control>
+                </nz-form-item>
+              </nz-col>
+            </nz-row>
+          </nz-col>
+  
+
+          <!-- 描述 -->
+          <nz-col [nzSm]="18">
+            <nz-form-item>
+              <nz-form-label nzNoColon>{{ l('Description') }}</nz-form-label>
+              <nz-form-control>
+                <textarea
+                  name="description"
+                  #descriptionInput="ngModel"
+                  maxlength="1000"
+                  nz-input
+                  [nzAutosize]="{ minRows: 4, maxRows: 4 }"
+                  [(ngModel)]="entity.description"
+                  [placeholder]="l('Description')"
+                ></textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+      </div>
+  
+      <!--基础配置-->
+      <g-collapse [header]="l('Fields.Tenant.BasicConfig')" [isActive]="true">
+        <ng-container>
+            <!--自己增加逻辑吧-->
+        </ng-container>
+      </g-collapse>
+  
+      <g-collapse [header]="l('Fields.Tenant.OperatingRecord')" [type]="'log'" [isActive]="false">
+        <ng-container>
+          <!-- 最后操作人 -->
+          <nz-row [nzGutter]="24">
+            <nz-col [nzSm]="6">
+              <!-- 创建人 -->
+              <nz-form-item>
+                <nz-form-label class="labelStyle" nzNoColon>{{ l('Fields.Tenant.OperatingRecordCreatePeople') }} </nz-form-label>
+                <nz-form-control>
+                  <span>{{ operationName }}</span>
+                </nz-form-control>
+              </nz-form-item>
+            </nz-col>
+            <nz-col [nzSm]="6">
+              <!-- 最近修改时间 -->
+              <nz-form-item>
+                <nz-form-label class="labelStyle" nzNoColon>{{ l('Fields.Tenant.OperatingRecordCreateTime') }} </nz-form-label>
+                <nz-form-control>
+                  <span> {{ operationTime | _moment: 'YYYY-MM-DD HH:mm:ss' }} </span>
+                </nz-form-control>
+              </nz-form-item>
+            </nz-col>
+          </nz-row>
+        </ng-container>
+      </g-collapse>
+    </form>
+  </nz-spin>

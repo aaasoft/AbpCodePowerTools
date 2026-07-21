@@ -1,0 +1,88 @@
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+@{
+    var data = Model.SPAClient;
+    var editCheckedDto = data.GetEditCheckedDtoFields();
+
+}
+
+import { Component, Output, EventEmitter, Injector, Input, ViewChild, OnChanges, SimpleChange, SimpleChanges, OnInit } from '@@angular/core';
+import { GNdoEditComponentBaseDirective } from '@@shared/component-base/g-ndo-edit-component-base';
+import { finalize } from 'rxjs/operators';
+import { NgForm } from '@@angular/forms';
+import { GConsts } from '@@shared/components/AppConsts/g-consts';
+import { @{@data.Entity.Name}EditDto } from '@@shared/service-proxies/api/@{@data.Entity.Name}EditDto';
+import { @{@data.Entity.Name}ServiceProxy } from '@@shared/service-proxies/api/@{@data.Entity.Name}ServiceProxy';
+import { CreateOrUpdate@{@data.Entity.Name}Input } from '@@shared/service-proxies/api/CreateOrUpdate@{@data.Entity.Name}Input';
+
+@@Component({
+  selector: 'create-or-edit-@{@data.Entity.SplitName}',
+  templateUrl: './create-or-edit-@{@data.Entity.SplitName}.component.html',
+  styleUrls: ['./create-or-edit-@{@data.Entity.SplitName}.component.less'], 
+})
+
+export class CreateOrEdit@{@data.Entity.Name}Component extends GNdoEditComponentBaseDirective implements OnInit, OnChanges {
+ 
+
+  entity = new @{@data.Entity.Name}EditDto();
+
+  /**
+   * 初始化的构造函数
+   */
+  constructor(injector: Injector, private _@{@data.Entity.LowerName}Service: @{@data.Entity.Name}ServiceProxy) {
+    super(injector);
+  }
+
+
+    /**
+   * 初始化方法
+   */
+  init(): void {
+    this.loading = true;
+
+    if (this.id) {
+      this._@{@data.Entity.LowerName}Service.getForEdit(this.id)
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe((result) => {
+            this.entity = result.@{@data.Entity.LowerName};
+            this.operationName = result.operationName;
+            this.operationTime = result.operationTime;
+      });
+    } else {
+      this.entity = new @{@data.Entity.Name}EditDto();
+      this.reset();
+      this.loading = false;
+    }
+  }
+
+
+  
+  /**
+   * 保存方法,提交form表单
+   */
+  save(): void {
+    if (!this.checkPageForms()) {
+      return;
+    }
+    this.loading = true;
+    let input: CreateOrUpdate@{@data.Entity.Name}Input = new CreateOrUpdate@{@data.Entity.Name}Input();
+    input.@{@data.Entity.LowerName} = this.entity;
+    this._@{@data.Entity.LowerName}Service
+        .createOrUpdate(input)
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe(() => {
+        this.saveSuccess(this.entity.@{@data.Entity.LowerName}Name);
+        this.handleSaveEndBackView(result);
+        this.refreshParent({
+          reset: null,
+        });
+      });
+  } 
+  
+  protected resetFormData() {
+    this.entity = new @{@data.Entity.Name}EditDto();
+  }
+  protected resetPageFormsAfter() {}
+
+
+}

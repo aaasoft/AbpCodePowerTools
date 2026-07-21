@@ -1,0 +1,60 @@
+
+@{
+    var data = Model.Server;
+}
+// ReSharper disable once CheckNamespace
+namespace @data.ReplaceInfo.CompanyNamespace@{@data.ReplaceInfo.SolutionNamespace}.Authorization
+{
+	/// <summary>
+    /// 定义系统的权限名称的字符串常量。
+    /// <see cref="@{@data.Entity.Name}AuthorizationProvider" />中对权限的定义.
+    ///</summary>
+	public static  class @{@data.Entity.Name}Permissions
+	{
+		/// <summary>
+		/// @{@data.Entity.Name}权限节点
+		///</summary>
+		public const string @{@data.Entity.Name}_Node = "Pages.@{@data.Entity.Name}";
+
+		/// <summary>
+		/// @{@data.Entity.Name}查询授权
+		///</summary>
+		public const string @{@data.Entity.Name}_Query = @{@data.Entity.Name}_Node+".Query";
+
+		/// <summary>
+		/// @{@data.Entity.Name}创建权限
+		///</summary>
+		public const string @{@data.Entity.Name}_Create = @{@data.Entity.Name}_Node+".Create";
+
+		/// <summary>
+		/// @{@data.Entity.Name}修改权限
+		///</summary>
+		public const string @{@data.Entity.Name}_Edit = @{@data.Entity.Name}_Node+".Edit";
+
+		/// <summary>
+		/// @{@data.Entity.Name}删除权限
+		///</summary>
+		public const string @{@data.Entity.Name}_Delete = @{@data.Entity.Name}_Node+".Delete";
+
+        /// <summary>
+		/// @{@data.Entity.Name}批量删除权限
+		///</summary>
+		public const string @{@data.Entity.Name}_BatchDelete = @{@data.Entity.Name}_Node+".BatchDelete";
+
+		/// <summary>
+		/// @{@data.Entity.Name}导出Excel
+		///</summary>
+		public const string @{@data.Entity.Name}_ExportExcel=@{@data.Entity.Name}_Node+".ExportExcel";
+
+		 
+		 
+							//// custom codes
+									
+							
+							@{@ViewBag.OldCustomCode}
+							//// custom codes end
+         
+    }
+
+}
+

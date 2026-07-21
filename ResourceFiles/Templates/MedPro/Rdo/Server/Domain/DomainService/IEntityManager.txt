@@ -1,0 +1,21 @@
+@{
+    var data = Model.Server;
+	 var option = Model.MainWindowsOptionCfg;
+
+}
+using GCT.Foundation;
+
+namespace @{@data.Entity.Namespace}.DomainService
+{
+    public interface I@{@data.Entity.Name}Manager : IGuidRdoDomainService<@{@data.Entity.Name}, @{@data.Entity.Name}Base>
+    {
+
+        /// <summary>
+        /// 根据id获取@{@data.Entity.Name}
+        /// </summary>
+        /// <param name="@{@data.Entity.LowerName}BaseId"></param>
+        /// <param name="@{@data.Entity.LowerName}Id"></param>
+        /// <returns></returns>
+        Task<@{@data.Entity.Name}> Get@{@data.Entity.Name}ById(Guid? @{@data.Entity.LowerName}BaseId, Guid? @{@data.Entity.LowerName}Id);
+    }
+}

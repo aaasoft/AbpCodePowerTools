@@ -1,0 +1,18 @@
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+@{
+    var data = Model.SPAClient;
+    var editCheckedDto = data.GetEditCheckedDtoFields();
+
+}
+
+<g-rdo-select
+  [selectList]="selectList"
+  [(ngModel)]="value"
+  (ngModelChange)="onChange($event)"
+  [placeHolder]="placeHolder"
+  (reload)="reload($event)"
+  [name]="name"
+  [defaultMode]="defaultMode"
+  ngDefaultControl
+></g-rdo-select>

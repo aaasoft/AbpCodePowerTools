@@ -1,0 +1,95 @@
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+@{
+    var data = Model.SPAClient;
+    var editCheckedDto = data.GetEditCheckedDtoFields();
+
+}
+
+import { Component, EventEmitter, forwardRef, Injector, Input, OnChanges, OnInit, Output } from '@@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@@angular/forms';
+import { AppComponentBaseDirective } from '@@commercial/l-52abp-ng';
+import { GetQueryFilterInput } from '@@shared/service-proxies/api/GetQueryFilterInput';
+import { RdoBaseDto } from '@@shared/service-proxies/api/RdoBaseDto';
+import { debounceTime, finalize } from 'rxjs/operators';
+import { @{@data.Entity.Name}ServiceProxy } from '@@shared/service-proxies/api/@{@data.Entity.Name}ServiceProxy';
+
+@@Component({
+  selector: 'g-@{@data.Entity.SplitName}-select-rdo',
+  templateUrl: './g-@{@data.Entity.SplitName}-select-rdo.component.html',
+  styleUrls: ['./g-@{@data.Entity.SplitName}-select-rdo.component.less'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: forwardRef(() => G@{@data.Entity.Name}SelectRdoComponent),
+    },
+  ],
+})
+export class G@{@data.Entity.Name}SelectRdoComponent extends AppComponentBaseDirective implements OnInit, ControlValueAccessor {
+  @@Input() defaultMode = false;
+  @@Input()
+  name: string;
+
+  _value: any;
+
+  @@Input()
+  set value(val: any) {
+    this.writeValue(val);
+  }
+  get value(): any {
+    return this._value;
+  }
+
+  selectList: RdoBaseDto[] = [];
+  defaultValue;
+  placeHolder = this.l('@{@data.Entity.Name}');
+
+  @@Output()
+  valueChange = new EventEmitter<any>();
+  constructor(
+    injector: Injector,
+    private _@{@data.Entity.LowerName}ServiceProxy: @{@data.Entity.Name}ServiceProxy) {
+    super(injector);
+  }
+
+  ngOnInit() {
+    this.searchList('');
+  }
+
+  onChange(val) {
+    this.valueChange.emit(this._value);
+  }
+
+  reload(val) {
+    this.searchList(val);
+  }
+  searchList(val) {
+    const input = new GetQueryFilterInput();
+    input.filterText = val;
+
+    if (Array.isArray(this.value) && this.value.length === 2) {
+      input.rdoBaseId = this.value[0];
+      input.rdoId = this.value[1];
+    }
+
+    this._@{@data.Entity.LowerName}ServiceProxy
+      .getRdoCombox(input)
+      .pipe(debounceTime(500))
+      .pipe(finalize(() => {}))
+      .subscribe((result) => {
+        this.selectList = result;
+      });
+  }
+
+  writeValue(obj: any): void {
+    this._value = obj;
+  }
+  registerOnChange(fn: any): void {
+    this.valueChange.emit = fn;
+  }
+  registerOnTouched(fn: any): void {}
+  setDisabledState?(isDisabled: boolean): void {
+    // this.readonly = isDisabled;
+  }
+}

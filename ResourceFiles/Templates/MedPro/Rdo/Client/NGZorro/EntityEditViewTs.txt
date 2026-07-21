@@ -1,0 +1,116 @@
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+@{
+    var data = Model.SPAClient;
+    var editCheckedDto = data.GetEditCheckedDtoFields();
+
+}
+import { Component, OnChanges, Injector, OnInit } from '@@angular/core';
+import { GConsts } from '@@shared/components/AppConsts/g-consts';
+import { CreateOrUpdate@{@data.Entity.Name}Input } from '@@shared/service-proxies/api/CreateOrUpdate@{@data.Entity.Name}Input';
+import { @{@data.Entity.Name}BaseEditDto } from '@@shared/service-proxies/api/@{@data.Entity.Name}BaseEditDto';
+import { @{@data.Entity.Name}EditDto } from '@@shared/service-proxies/api/@{@data.Entity.Name}EditDto';
+import { @{@data.Entity.Name}ServiceProxy } from '@@shared/service-proxies/api/@{@data.Entity.Name}ServiceProxy';
+import { TokenService } from 'abp-ng2-module';
+import { AppConsts } from 'abpPro/AppConsts';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { finalize } from 'rxjs/operators';
+import { copy } from '@@delon/util';
+import { SysFileListDto } from '@@shared/service-proxies/api/SysFileListDto';
+import { GRdoEditComponentBaseDirective } from '@@shared/component-base';
+
+@@Component({
+  selector: 'create-or-edit-@{@data.Entity.SplitName}',
+  templateUrl: './create-or-edit-@{@data.Entity.SplitName}.component.html',
+  styleUrls: ['./create-or-edit-@{@data.Entity.SplitName}.component.less'],
+ 
+    })
+
+export class CreateOrEdit@{@data.Entity.Name}Component extends GRdoEditComponentBaseDirective implements OnInit, OnChanges {
+
+  entity = new @{@data.Entity.Name}EditDto();
+
+  /**
+   * 初始化的构造函数
+   */
+  constructor(injector: Injector, private _@{@data.Entity.LowerName}ServiceProxy: @{@data.Entity.Name}ServiceProxy) {
+    super(injector);
+  }
+
+  /**
+   * 初始化方法
+   */
+  init(): void {
+    this.loading = true;
+
+    // 编辑rdo
+    if (this.rdoId) {
+      this._@{@data.Entity.LowerName}ServiceProxy
+        .getForEdit(this.rdoId)
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe((item) => {
+          // 表单赋值
+          this.entity = item.@{@data.Entity.LowerName};
+          this.operationName = item.operationName;
+          this.operationTime = item.operationTime;
+        });
+      return;
+    }
+
+    // 新增rdo
+    if (this.rdoBaseId) {
+      this._@{@data.Entity.LowerName}ServiceProxy
+        .getByBaseId(this.rdoBaseId)
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe((item) => {
+          this.entity.@{@data.Entity.LowerName}Base = item;
+        });
+      return;
+    }
+
+    // 新增rdo和rdobase
+    this.loading = false;
+  }
+
+  /**
+   * 保存方法,提交form表单
+   */
+  save(): void {
+    if (!this.checkPageForms()) {
+      return;
+    }
+    this.loading = true;
+    const input = new CreateOrUpdate@{@data.Entity.Name}Input();
+    input.@{@data.Entity.LowerName} = this.entity;
+    if (this.rdoBaseId) {
+      input.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}BaseId = this.rdoBaseId;
+    }
+    if (!input.@{@data.Entity.LowerName}.isRevOfRcdId) {
+      input.@{@data.Entity.LowerName}.isRevOfRcdId = false;
+    }
+    this._@{@data.Entity.LowerName}ServiceProxy
+      .createOrUpdate(input)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe(() => {
+        this.saveSuccess(input.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Base.@{@data.Entity.LowerName}Name, input.@{@data.Entity.LowerName}.@{@data.Entity.LowerName}Revision);
+        
+        this.handleSaveEndBackView(result);
+
+        this.refreshParent({
+          reset: undefined, 
+        });
+      });
+  }
+
+
+  /** 重置表单绑定的数据源 */
+  protected resetFormData() {
+    this.entity = new @{@data.Entity.Name}EditDto();
+    this.entity.isRevOfRcdId = false;
+    this.entity.@{@data.Entity.LowerName}Base = new @{@data.Entity.Name}BaseEditDto();
+  }
+  
+  protected resetPageFormsAfter() {
+  }
+
+}

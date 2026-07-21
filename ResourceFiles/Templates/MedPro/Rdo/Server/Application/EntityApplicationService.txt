@@ -1,0 +1,650 @@
+@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
+@model AbpDtoGenerator.GeneratorModels.ViewModel
+
+@{
+    var data = Model.Server;
+    var option = Model.MainWindowsOptionCfg;
+    var isHaveEnums = data.Entity.Properties.Any(a => a.ContrlType == AppYoYoSoftControlNames.Enums);
+}
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
+using Abp.Authorization;
+using Abp.Linq.Extensions;
+using Abp.Timing;
+using Abp.UI;
+using GCT.Foundation;
+using GCT.Foundation.Authorization;
+using GCT.Foundation.Dtos;
+using GCT.Foundation.Modules.FileManager.DomainService;
+using GCT.MedPro.Application.Copy;
+using GCT.MedPro.Application.Dtos;
+using GCT.MedPro.Application.Dtos.Copy;
+using GCT.MedPro.Core.ModelAuditHistoryModule.ModelAuditHistoryDefinition.DomainService;
+using L._52ABP.Common.Extensions;
+using Microsoft.EntityFrameworkCore;
+using @{@data.Entity.Namespace};
+using @{@data.Entity.Namespace}.DomainService;
+using @{@data.Entity.Namespace}.Entity;
+using Abp.Extensions;
+
+namespace @data.Entity.Namespace
+{
+    /// <summary>
+    /// @{@data.Entity.EntityDisplayName}应用层服务的接口实现方法
+    /// <see cref="@{@data.Entity.Name}"/>  实体位置
+    ///</summary>
+    [AbpAuthorize]
+    public class @{@data.Entity.Name}AppService : FoundationAppServiceBase, I@{@data.Entity.Name}AppService
+    {
+        
+          private readonly IModelAuditHistoryManager _modelAuditHistoryManager;
+        @if (option.UseExportExcel)
+        {<pre> private readonly I@{@data.Entity.Name}ListExcelExporter _@{@data.Entity.LowerName}ListExcelExporter;
+                private readonly ImportManager<@{@data.Entity.Name}ImportDto> _importManager;
+
+        </pre>}
+
+        @if (isHaveEnums)
+        {<pre> private readonly IEnumExtensionsAppService _enumExtensionsAppService;</pre>}
+        private readonly ISqlExecutor _sqlExecutor;
+
+        @data.ReplaceInfo.PrivateIEntityNameManager
+
+        ///<summary>
+        /// 构造函数注入依赖
+        ///</summary>
+        public @{@data.Entity.Name}AppService(
+       
+            @data.ReplaceInfo.IEntityNameManager,
+            ISqlExecutor sqlExecutor,
+              IModelAuditHistoryManager modelAuditHistoryManager,
+            @if (option.UseExportExcel)
+            {<pre>@{@data.Entity.Name}ListExcelExporter @{@data.Entity.LowerName}ListExcelExporter,
+            ImportManager<@{@data.Entity.Name}ImportDto> importManager,</pre>}
+
+            @if (isHaveEnums)
+            {<pre>IEnumExtensionsAppService enumExtensionsAppService</pre>}
+            )
+
+            {
+             @data.ReplaceInfo.EntityNameManager
+                _modelAuditHistoryManager = modelAuditHistoryManager;
+             _sqlExecutor = sqlExecutor;
+
+            @if (option.UseExportExcel)
+            {<pre>_@{@data.Entity.LowerName}ListExcelExporter = @{@data.Entity.LowerName}ListExcelExporter;
+                        _importManager = importManager;            </pre>}
+
+            @if (isHaveEnums)
+            {<pre> _enumExtensionsAppService = enumExtensionsAppService;</pre>}
+
+            }
+
+        
+        #region 查询
+
+        /// <summary>
+        ///     获取@{@data.Entity.EntityDisplayName}Rdo列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<RdoBaseDto>> GetRdoPaged(Get@{@data.Entity.Name}sInput input)
+        {
+            // @{@data.Entity.EntityDisplayName}base 查询
+            var queryBase = _@{@data.Entity.LowerName}Manager.BaseQueryAsNoTracking
+                .WhereIf(!input.FilterText.IsNullOrWhiteSpace(),
+                    f => f.@{@data.Entity.Name}Name.Contains(input.FilterText));
+
+            // 总数
+            var rdoBaseTotalCount = await queryBase.CountAsync();
+
+            // @{@data.Entity.EntityDisplayName}转换为标准的Rdo对象列表
+            var rdoBaseList = await queryBase
+                .Select(x => new RdoBaseDto
+                {
+                    Id = x.Id,
+                    Name = x.@{@data.Entity.Name}Name,
+                    RevOfRcdId = x.RevOfRcdId,
+                    CreationTime = x.CreationTime
+                })
+                .OrderBy(input.Sorting)
+                .PageBy(input)
+                .ToListAsync();
+
+            // @{@data.Entity.EntityDisplayName}base id集合
+            var baseIds = rdoBaseList.Select(x => x.Id).ToList();
+
+            // @{@data.Entity.EntityDisplayName}列表倒叙排列
+            var rdoList = await _@{@data.Entity.LowerName}Manager.QueryAsNoTracking
+                .Where(x => baseIds.Contains(x.@{@data.Entity.Name}BaseId))
+                .Select(o => new RdoDto()
+                {
+                    Id = o.Id,
+                    BaseId = o.@{@data.Entity.Name}BaseId,
+                    Revision = o.@{@data.Entity.Name}Revision,
+                    CreationTime = o.CreationTime
+                })
+                .ToListAsync();
+            // @{@data.Entity.EntityDisplayName}列表字典化
+            var rdoDict = rdoList.GroupBy(o => o.BaseId).ToDictionary(o => o.Key, o => o);
+
+            // @{@data.Entity.EntityDisplayName}分组设置
+            foreach (var rdo in rdoBaseList)
+            {
+                if (rdoDict.TryGetValue(rdo.Id, out var rdoDataList))
+                {
+                    rdo.RdoList = rdoDataList.AsQueryable()
+                        .OrderByDescending(x => x.CreationTime)
+                        .ToList();
+                }
+                else
+                {
+                    rdo.RdoList = new List<RdoDto>();
+                }
+            }
+
+            var ret = new List<RdoBaseDto>();
+            foreach (var baseDto in rdoBaseList)
+            {
+                if (baseDto.RdoList.Count > 0)
+                {
+                    ret.Add(baseDto);
+                }
+            }
+
+            return new PagedResultDto<RdoBaseDto>(rdoBaseTotalCount, ret);
+        }
+
+        /// <summary>
+        ///     获取@{@data.Entity.EntityDisplayName}Rdo列表for下拉列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        public async Task<List<RdoBaseDto>> GetRdoCombox(GetQueryFilterInput input)
+        {
+            //baseList
+            var entityBaseList = await _@{@data.Entity.LowerName}Manager.BaseQueryAsNoTracking
+                .WhereIf(!string.IsNullOrEmpty(input.FilterText), x => x.@{@data.Entity.Name}Name.Contains(input.FilterText))
+                .Select(x => new RdoBaseDto
+                {
+                    Id = x.Id,
+                    Name = x.@{@data.Entity.Name}Name,
+                    RevOfRcdId = x.RevOfRcdId,
+                    CreationTime = x.CreationTime
+                })
+                .OrderBy(input.Sorting)
+                .ToListAsync();
+
+            //实体base的id列表
+            var baseIds = entityBaseList.Select(x => x.Id).ToList();
+
+            // 传入 RdoId 为空，但 RdoBaseId 不为空，取默认版本
+            if (!input.RdoId.HasValue && input.RdoBaseId.HasValue)
+            {
+                var baseDto = entityBaseList.FirstOrDefault(o => o.Id == input.RdoBaseId.Value);
+                // 如果现有数据中没有查到base，那么就跳过
+                if (baseDto != null)
+                {
+                    input.RdoId = baseDto.RevOfRcdId;
+                }
+            }
+
+            //实体base下的@{@data.Entity.EntityDisplayName}列表
+            var rdoListItems = await _@{@data.Entity.LowerName}Manager.QueryAsNoTracking
+                .WhereIfThenElse(
+                    input.RdoId.HasValue,
+                    // then - 如果设置了当前选中 rdo 的 id
+                    thenItem => thenItem.Id == input.RdoId.Value
+                                || baseIds.Contains(thenItem.@{@data.Entity.Name}BaseId),
+                    // else - 如果没有设置当前选中 rdo 的 id
+                    elseItem => baseIds.Contains(elseItem.@{@data.Entity.Name}BaseId)
+                )
+                .Select(a => new RdoDto
+                {
+                    BaseId = a.@{@data.Entity.Name}BaseId,
+                    Id = a.Id,
+                    Revision = a.@{@data.Entity.Name}Revision,
+                    CreationTime = a.CreationTime
+                })
+                .ToListAsync();
+
+            // rdo base 的 rdo 集合
+            foreach (var rdoBaseDto in entityBaseList)
+            {
+                rdoBaseDto.RdoList = rdoListItems
+                    .Where(x => x.BaseId == rdoBaseDto.Id)
+                    .OrderByDescending(o => o.CreationTime)
+                    .ToList();
+            }
+
+            return entityBaseList.Where(o => o.RdoList != null && o.RdoList.Count > 0)
+                .ToList();
+        }
+
+        /// <summary>
+        ///     获取编辑 @{@data.Entity.EntityDisplayName}
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<Get@{@data.Entity.Name}ForEditOutput> GetForEdit(NullableIdDto<Guid> input)
+        {
+            var output = new Get@{@data.Entity.Name}ForEditOutput();
+            @{@data.Entity.Name}EditDto editDto;
+
+            if (input.Id.HasValue)
+            {
+                var entity = await _@{@data.Entity.LowerName}Manager.FindRdoByIdWithInclude(input.Id.Value);
+
+                editDto = ObjectMapper.Map<@{@data.Entity.Name}EditDto>(entity);
+
+                if (editDto.@{@data.Entity.Name}Base.RevOfRcdId == input.Id)
+                {
+                    editDto.IsRevOfRcdId = true;
+                }
+
+                //操作人信息
+                output.OperationTime = entity.LastModificationTime ?? entity.CreationTime;
+                output.OperationName = entity.LastModifierUserName ?? entity.CreatorUserName;
+            }
+            else
+            {
+                editDto = new @{@data.Entity.Name}EditDto();
+            }
+
+            output.@{@data.Entity.Name} = editDto;
+            return output;
+        }
+
+        /// <summary>
+        ///  通过指定baseId获取@{@data.Entity.Name}BaseListDto信息
+        /// </summary>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Query)]
+        public async Task<@{@data.Entity.Name}BaseListDto> GetByBaseId(EntityDto<Guid> input)
+        {
+            var entity = await _@{@data.Entity.LowerName}Manager.FindBaseById(input.Id);
+            var dto = ObjectMapper.Map<@{@data.Entity.Name}BaseListDto>(entity);
+
+            return dto;
+        }
+
+        #endregion 查询
+
+        #region 服务于其他业务的方法
+
+
+        #endregion
+
+        #region 添加、修改、删除
+
+        /// <summary>
+        ///   添加或者修改@{@data.Entity.EntityDisplayName}的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Create, @{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Edit)]
+        public async Task<RdoCreateOrUpdateOutput> CreateOrUpdate(CreateOrUpdate@{@data.Entity.Name}Input input)
+        {
+            // @{@data.Entity.EntityDisplayName}id为空，新增
+            if (!input.@{@data.Entity.Name}.Id.HasValue || !input.@{@data.Entity.Name}.@{@data.Entity.Name}BaseId.HasValue)
+            {
+                return await this.Create(input.@{@data.Entity.Name});
+            }
+
+            // 更新
+            return await this.Update(input.@{@data.Entity.Name});
+        }
+
+        /// <summary>
+        ///     删除@{@data.Entity.EntityDisplayName}信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Delete)]
+        public async Task Delete(EntityDto<Guid> input)
+        {
+            var @{@data.Entity.LowerName} = await _@{@data.Entity.LowerName}Manager.FindRdoByIdWithInclude(input.Id);
+            // 找不到数据
+            if (@{@data.Entity.LowerName} == null)
+            {
+                this.NullError();
+            }
+
+            // 不允许删除默认版本
+            if (@{@data.Entity.LowerName}.@{@data.Entity.Name}Base.RevOfRcdId == @{@data.Entity.LowerName}.Id)
+            {
+                this.ThrowDeleteDefaultVersion("Default@{@data.Entity.Name}Version");
+            }
+
+
+            // 创建追溯 - 删除
+            await _modelAuditHistoryManager.CreateOnDelete(@{@data.Entity.LowerName});
+
+            // 删除
+            await _@{@data.Entity.LowerName}Manager.DeleteRdo(@{@data.Entity.LowerName});
+        }
+
+        /// <summary>
+        ///     删除@{@data.Entity.EntityDisplayName}base信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Delete)]
+        public async Task DeleteBase(EntityDto<Guid> input)
+        {
+            var @{@data.Entity.LowerName}s = await this._@{@data.Entity.LowerName}Manager.GetRdoIncludeQuery()
+                .Where(o => o.@{@data.Entity.Name}BaseId == input.Id)
+                .ToListAsync();
+
+            // 获取base
+            var @{@data.Entity.LowerName}Base = default(@{@data.Entity.Name}Base);
+            // 关联查询获取到了
+            if (@{@data.Entity.LowerName}s.Count > 0)
+            {
+                @{@data.Entity.LowerName}Base = @{@data.Entity.LowerName}s.FirstOrDefault()?.@{@data.Entity.Name}Base;
+            }
+            else
+            {
+                // 单独查询base
+                @{@data.Entity.LowerName}Base = await _@{@data.Entity.LowerName}Manager.FindBaseById(input.Id);
+            }
+
+            // 遍历删除
+            foreach (var @{@data.Entity.LowerName} in @{@data.Entity.LowerName}s)
+            {
+                // 创建追溯 - 删除
+                await this._modelAuditHistoryManager.CreateOnDelete(@{@data.Entity.LowerName});
+                // 删除doc
+                await this._@{@data.Entity.LowerName}Manager.DeleteRdo(@{@data.Entity.LowerName});
+            }
+
+            // 删除base
+            await _@{@data.Entity.LowerName}Manager.DeleteBase(@{@data.Entity.LowerName}Base);
+        }
+
+        #endregion 添加、修改、删除
+
+        #region 复制
+
+        /// <summary>
+        ///     复制@{@data.Entity.EntityDisplayName}
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Copy)]
+        public async Task CopyRdo(CopyRdoDto input)
+        {
+            // 验证 base name 是否重复
+            var existDuplicateName = await _@{@data.Entity.LowerName}Manager.BaseQueryAsNoTracking
+                .Where(o => o.@{@data.Entity.Name}Name == input.Name)
+                .AnyAsync();
+            if (existDuplicateName)
+            {
+                RepetError(input.Name);
+            }
+
+            // 查找rdo数据
+            var @{@data.Entity.LowerName} = await this._@{@data.Entity.LowerName}Manager.FindRdoByIdWithInclude(input.RdoId);
+
+            // rdo 关联的数据
+            var @{@data.Entity.LowerName}Base = @{@data.Entity.LowerName}.@{@data.Entity.Name}Base;
+
+            // 新id
+            var newId = _@{@data.Entity.LowerName}Manager.NewId();
+            var newBaseId = _@{@data.Entity.LowerName}Manager.NewId();
+
+            // rdo - 复制，指定新的参数
+            @{@data.Entity.LowerName}.Id = newId;
+            @{@data.Entity.LowerName}.@{@data.Entity.Name}BaseId = newBaseId;
+            @{@data.Entity.LowerName}.@{@data.Entity.Name}Revision = input.Revision;
+            // base - 复制，指定新的参数
+            @{@data.Entity.LowerName}Base.Id = newBaseId;
+            @{@data.Entity.LowerName}Base.@{@data.Entity.Name}Name = input.Name;
+            @{@data.Entity.LowerName}Base.RevOfRcdId = newId;
+
+            // 置空审计数据
+            @{@data.Entity.LowerName}.EmptyAudit();
+            @{@data.Entity.LowerName}Base.EmptyAudit();
+
+            // 创建追溯 - 新增
+            await this._modelAuditHistoryManager.CreateOnAdd(@{@data.Entity.LowerName});
+            // 创建 rdo
+            await this._@{@data.Entity.LowerName}Manager.CreateRdo(@{@data.Entity.LowerName});
+            // 创建rdobase
+            await this._@{@data.Entity.LowerName}Manager.CreateOrUpdateBase(@{@data.Entity.LowerName}Base);
+        }
+
+        /// <summary>
+        ///     复制@{@data.Entity.EntityDisplayName}的版本信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Copy)]
+        public async Task CopyRdoRevision(CopyRdoRevisionDto input)
+        {
+            // 查找 rdo 数据
+            var @{@data.Entity.LowerName} = await _@{@data.Entity.LowerName}Manager.FindRdoByIdWithInclude(input.RdoId);
+            if (@{@data.Entity.LowerName} == null)
+            {
+                NullError();
+            }
+
+            // 判断是否存在重复版本
+            var existDuplicateRevision = await _@{@data.Entity.LowerName}Manager.QueryAsNoTracking
+                .AnyAsync(o => o.@{@data.Entity.Name}BaseId == @{@data.Entity.LowerName}.@{@data.Entity.Name}BaseId
+                               && o.@{@data.Entity.Name}Revision == input.Revision
+                );
+            if (existDuplicateRevision)
+            {
+                RepetError(input.Revision);
+            }
+
+           
+
+            // 新的id
+            var newId = _@{@data.Entity.LowerName}Manager.NewId();
+
+            // rdo - 复制，指定新的参数
+            @{@data.Entity.LowerName}.Id = newId;
+            @{@data.Entity.LowerName}.@{@data.Entity.Name}Revision = input.Revision;
+
+
+            // 置空审计数据
+            @{@data.Entity.LowerName}.EmptyAudit();
+
+            // 创建追溯 - 新增
+            await this._modelAuditHistoryManager.CreateOnAdd(@{@data.Entity.LowerName});
+            // 创建 rdo
+            await this._@{@data.Entity.LowerName}Manager.CreateRdo(@{@data.Entity.LowerName});
+        }
+
+        #endregion 增值内容
+
+
+
+        
+		@if (option.UseExportExcel){
+		<pre>
+
+
+        /// <summary>
+        /// 导入@{@data.Entity.Name}信息
+        /// </summary>
+        /// <param name="fileToken"></param>
+        /// <returns></returns>
+        public async Task<ExcelImpDto<@{@data.Entity.Name}ImportDto>> Import@{@data.Entity.Name}(string fileToken)
+        {
+            throw new NotImplementedException();
+        }
+
+
+		/// <summary>
+		/// 导出@{@data.Entity.EntityDisplayName}为excel文件
+		/// </summary>
+		/// <returns></returns>
+		@data.ReplaceInfo.PermissionExportExcel
+		public async Task<FileDto> GetToExcelFile()
+		{
+		   var @{@data.Entity.LowerName}s = await _@{@data.Entity.LowerName}Manager.QueryAsNoTracking.ToListAsync();
+            var @{@data.Entity.LowerName}ListDtos = ObjectMapper.Map<List<@{@data.Entity.Name}ExportDto>>(@{@data.Entity.LowerName}s);
+            return _@{@data.Entity.LowerName}ListExcelExporter.ExportToExcelFile(@{@data.Entity.LowerName}ListDtos);
+		}
+
+
+		   /// <summary>
+        /// 下载Excel模板
+        /// </summary>
+        /// <returns></returns>
+        public async Task<FileDto> DownloadExcelTemplate()
+        {
+
+        return await _importManager.GenerateTemplate("@{@data.Entity.EntityDisplayName}导入模板.xlsx");
+
+        }
+
+
+       
+
+		</pre>
+
+		}
+
+        
+
+
+
+        #region 原生sql用法示例
+
+        /// <summary>
+        /// 使用dapper查询sql语句返回结果
+        /// </summary>
+        /// <returns></returns>
+        @data.ReplaceInfo.PermissionQuery
+        public async Task<List<@{@data.Entity.Name}ListDto>>  GetAllBySql()
+        {
+
+            var list= await    _sqlExecutor.QueryAsync<@{@data.Entity.Name}>("select * from @{@data.Entity.Name}");
+
+            var dtos = ObjectMapper.Map<List<@{@data.Entity.Name}ListDto>>(list);
+
+            return dtos;
+
+        }
+
+         #endregion
+
+
+        #region 私有方法
+
+        /// <summary>
+        ///     新增@{@data.Entity.EntityDisplayName}
+        /// </summary>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Create)]
+        protected virtual async Task<RdoCreateOrUpdateOutput> Create(@{@data.Entity.Name}EditDto input)
+        {
+            // 置空参数
+            input.Id = default;
+
+            // 映射数据
+            var entityBase = default(@{@data.Entity.Name}Base);
+            // 从数据库查找 rdoBase
+            if (input.@{@data.Entity.Name}BaseId.HasValue)
+            {
+                entityBase = await this._@{@data.Entity.LowerName}Manager.FindBaseById(input.@{@data.Entity.Name}BaseId.Value);
+            }
+
+            // 如果 rdoBase 不为空，那么将输入数据填充到 rdoBase 实例
+            if (entityBase != null)
+            {
+                ObjectMapper.Map(input.@{@data.Entity.Name}Base, entityBase);
+            }
+            // 如果 rdoBase 为空,那么将输入数据映射为 rdoBase 实例
+            else
+            {
+                entityBase = ObjectMapper.Map<@{@data.Entity.Name}Base>(input.@{@data.Entity.Name}Base);
+                entityBase.Id = this._@{@data.Entity.LowerName}Manager.NewId();
+
+                // 如果数据库没找到 rdoBase, 说明 rdoBase 也是新增的，因此rdo必然是默认版本
+                input.IsRevOfRcdId = true;
+            }
+
+
+            // 将输入数据映射为 rdo 实例
+            var entity = ObjectMapper.Map<@{@data.Entity.Name}>(input);
+
+            // 关联 rdoBase
+            entity.@{@data.Entity.Name}BaseId = entityBase.Id;
+            entity.@{@data.Entity.Name}Base = entityBase;
+
+            // 添加到数据库
+            await _@{@data.Entity.LowerName}Manager.CreateOrUpdateRdoAndBase(entity, entityBase, input.IsRevOfRcdId);
+
+            // 创建追溯 - 新增
+            await _modelAuditHistoryManager.CreateOnAdd(entity);
+
+            return new RdoCreateOrUpdateOutput()
+            {
+                Id = entity.Id,
+                BaseId = entity.@{@data.Entity.Name}BaseId,
+                Name = entityBase.@{@data.Entity.Name}Name,
+                Version = entity.@{@data.Entity.Name}Revision,
+                IsRevOfRcdId = entity.Id == entityBase.RevOfRcdId
+            };
+
+        }
+
+        /// <summary>
+        ///     编辑@{@data.Entity.EntityDisplayName}
+        /// </summary>
+        [AbpAuthorize(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Edit)]
+        protected virtual async Task<RdoCreateOrUpdateOutput> Update(@{@data.Entity.Name}EditDto input)
+        {
+            // 查找
+            if (input.Id != null)
+            {
+                var entity = await this._@{@data.Entity.LowerName}Manager.FindRdoByIdWithInclude(input.Id.Value);
+                // 记录修改之前的数据
+                var beforeEntity = entity.JsonClone();
+
+                // 映射@{@data.Entity.EntityDisplayName}和@{@data.Entity.EntityDisplayName}base
+                ObjectMapper.Map(input, entity);
+                ObjectMapper.Map(input.@{@data.Entity.Name}Base, entity.@{@data.Entity.Name}Base);
+
+                // 提交到数据库
+                entity =  await _@{@data.Entity.LowerName}Manager.CreateOrUpdateRdoAndBase(entity, entity.@{@data.Entity.Name}Base, input.IsRevOfRcdId);
+
+                // 创建追溯 - 修改
+                await _modelAuditHistoryManager.CreateOnUpdate(beforeEntity, entity);
+
+                return new RdoCreateOrUpdateOutput()
+                {
+                    Id = entity.Id,
+                    BaseId = entity.@{@data.Entity.Name}BaseId,
+                    Name = entityBase.@{@data.Entity.Name}Name,
+                    Version = entity.@{@data.Entity.Name}Revision,
+                    IsRevOfRcdId = entity.Id == entityBase.RevOfRcdId
+                };
+            }
+
+            return null;
+        }
+
+
+        #endregion
+
+
+
+		//// custom codes
+
+
+		@{@ViewBag.OldCustomCode}
+		//// custom codes end
+
+    }
+}
+
+

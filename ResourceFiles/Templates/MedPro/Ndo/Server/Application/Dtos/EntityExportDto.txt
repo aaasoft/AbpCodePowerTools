@@ -1,0 +1,36 @@
+@{
+    var data = Model.Server;
+}
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using Abp.Domain.Entities.Auditing;
+using System.Collections.ObjectModel;
+using @{@data.Entity.Namespace};
+using GCT.Foundation;
+
+
+namespace  @{@data.Entity.Namespace}.Dtos
+{
+	/// <summary>
+	/// @{@data.Entity.EntityDisplayName}的导出DTO
+	/// <see cref="@{@data.Entity.Name}"/>
+	/// </summary>
+    public class @{@data.Entity.Name}ExportDto
+    {
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        public @data.Entity.EntityKeyName? Id { get; set; }         
+
+
+        @data.ListDtoFieldCode
+		
+		//// custom codes
+				
+		
+		@{@ViewBag.OldCustomCode}
+		//// custom codes end
+    }
+}

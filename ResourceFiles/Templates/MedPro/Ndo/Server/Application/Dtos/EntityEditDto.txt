@@ -1,0 +1,39 @@
+@{
+    var data = Model.Server;
+}
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using Abp.Domain.Entities.Auditing;
+using System.Collections.ObjectModel;
+using GCT.Foundation;
+using @{@data.Entity.Namespace};
+
+
+namespace  @{@data.Entity.Namespace}.Dtos
+{
+	/// <summary>
+	/// @{@data.Entity.EntityDisplayName}的编辑DTO
+	/// <see cref="@{@data.Entity.Name}"/>
+	/// </summary>
+    public class @{@data.Entity.Name}EditDto
+    {
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        public @data.Entity.EntityKeyName? Id { get; set; }  
+		
+
+		public string ConcurrencyToken { get; set; }
+
+
+        @data.EditDtoFieldCode
+		
+		//// custom codes
+				
+		
+		@{@ViewBag.OldCustomCode}
+		//// custom codes end
+    }
+}
