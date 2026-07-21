@@ -22,24 +22,7 @@ public partial class MainWindow : Window, IComponentConnector
 		base.DataContext = Global.MainViewModel;
 		base.Loaded += MainWindow_Loaded;
 		title.MouseDown += Title_MouseDown;
-		base.Closing += MainWindow_Closing;
 		base.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-	}
-
-	private void MainWindow_Closing(object sender, CancelEventArgs e)
-	{
-		string text = Path.Combine(Global.SolutionInfo.SolutionPath, "52abp_code_power");
-		if (!Directory.Exists(text))
-		{
-			Directory.CreateDirectory(text);
-		}
-		string path = Path.Combine(text, "52ABP_CodePowerExtendedModel.json");
-		string content = JsonConvert.SerializeObject(Global.MainViewModel.MainExtendedCfg);
-		path.CreateFile(content);
-		string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(Global.SolutionInfo.CurrentSelectFilePath);
-		string path2 = Path.Combine(text, fileNameWithoutExtension + ".json");
-		string content2 = JsonConvert.SerializeObject(Global.Entity);
-		path2.CreateFile(content2);
 	}
 
 	private void Title_MouseDown(object sender, MouseButtonEventArgs e)

@@ -147,23 +147,25 @@ public static class SyntaxEx
 	{
 		string text = string.Empty;
 		string text2 = propertyNode.Modifiers.ToList().FirstOrDefault().LeadingTrivia.ToString();
-		if (string.IsNullOrWhiteSpace(text))
-		{
-			string[] array = text2.Split(BR, StringSplitOptions.RemoveEmptyEntries);
-			foreach (string text3 in array)
-			{
-				if (!string.IsNullOrWhiteSpace(text3) && !text3.Contains("summary"))
-				{
-					text = text3.Replace("///", string.Empty).Trim();
-					break;
-				}
-			}
-		}
+        //首先尝试读取注释
         if (string.IsNullOrWhiteSpace(text))
         {
-			var descriptionString = propertyNode.AttributeLists
-				.FirstOrDefault(t => t.ToString().Contains("[Description("))?
-				.ToString();
+            string[] array = text2.Split(BR, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string text3 in array)
+            {
+                if (!string.IsNullOrWhiteSpace(text3) && !text3.Contains("summary"))
+                {
+                    text = text3.Replace("///", string.Empty).Trim();
+                    break;
+                }
+            }
+        }
+        //其次尝试读取Description特性
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            var descriptionString = propertyNode.AttributeLists
+                .FirstOrDefault(t => t.ToString().Contains("[Description("))?
+                .ToString();
             if (!string.IsNullOrWhiteSpace(descriptionString))
             {
                 var startIndex = descriptionString.IndexOf('\"') + 1;
@@ -171,6 +173,7 @@ public static class SyntaxEx
                 text = descriptionString.Substring(startIndex, endIndex - startIndex);
             }
         }
+		//最后使用属性名称
         if (string.IsNullOrWhiteSpace(text))
 		{
 			text = propertyNode.Identifier.Text;
