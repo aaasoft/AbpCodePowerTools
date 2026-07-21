@@ -146,6 +146,7 @@ public static class LoadEntityService
 			entityMeta.BaseClassNameList = string.Join(",", list);
 			entityMeta.BaseClassDtoName = empty;
 			entityMeta.EntityKeyName = entityKeyName;
-		}
+			entityMeta.EntityDisplayName = classNode.GetAnnotationStr();
+        }
 	}
 }

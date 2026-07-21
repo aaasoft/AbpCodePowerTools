@@ -143,10 +143,49 @@ public static class SyntaxEx
 		return propertyNode.Type.IsSimpleType();
 	}
 
-	public static string GetAnnotationStr(this PropertyDeclarationSyntax propertyNode)
+    public static string GetAnnotationStr(this ClassDeclarationSyntax classNode)
+	{
+        string text = string.Empty;
+        string text2 = classNode.Modifiers.FirstOrDefault().LeadingTrivia.ToString();
+        //首先尝试读取注释
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            string[] array = text2.Split(BR, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string text3 in array)
+            {
+                if (!string.IsNullOrWhiteSpace(text3) && !text3.Contains("summary"))
+                {
+                    text = text3.Replace("///", string.Empty).Trim();
+                    break;
+                }
+            }
+        }
+        //其次尝试读取Description特性
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            var descriptionString = classNode.AttributeLists
+                .FirstOrDefault(t => t.ToString().Contains("[Description("))?
+                .ToString();
+            if (!string.IsNullOrWhiteSpace(descriptionString))
+            {
+                var startIndex = descriptionString.IndexOf('\"') + 1;
+                var endIndex = descriptionString.LastIndexOf('\"');
+                text = descriptionString.Substring(startIndex, endIndex - startIndex);
+            }
+        }
+        //最后使用属性名称
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            text = classNode.Identifier.Text;
+        }
+        return text;
+    }
+
+
+    public static string GetAnnotationStr(this PropertyDeclarationSyntax propertyNode)
 	{
 		string text = string.Empty;
-		string text2 = propertyNode.Modifiers.ToList().FirstOrDefault().LeadingTrivia.ToString();
+		string text2 = propertyNode.Modifiers.FirstOrDefault().LeadingTrivia.ToString();
         //首先尝试读取注释
         if (string.IsNullOrWhiteSpace(text))
         {
