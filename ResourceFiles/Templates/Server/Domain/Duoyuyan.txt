@@ -12,7 +12,7 @@
 
 ## Json的配置方法如下
 
-在@{@data.ReplaceInfo.SolutionNamespace}.Core类库中，找到路径为 Localization->SourceFiles->Json文件夹下的对应文件
+在@{@data.ReplaceInfo.SolutionNamespace}.Core类库中，找到路径为 Localization->SourceFiles文件夹下的对应文件
 
 ### 中文本地化的内容Chinese localized content
 
@@ -20,8 +20,8 @@
 
 > 请注意防止键名重复，产生异常
 
-```json
-                    <pre>//@{@data.Entity.EntityDisplayName}的多语言配置==>中文</pre>
+```xml
+<pre><!--@{@data.Entity.EntityDisplayName}的多语言配置==>中文--></pre>
         @{
             foreach (var item in data.Entity.Properties)
             {
@@ -29,28 +29,28 @@
                 {
                     if (item.FieldTypeStr=="string")
                     {
-                    <pre>
-                     "@{@data.Entity.Name@item.FieldName}": "@item.FieldDisplayName",
-                    "@{@data.Entity.Name@item.FieldName}InputDesc": "请输入@{@item.FieldDisplayName}",
-                    </pre> 
+<pre><text name="@{@data.Entity.Name@item.FieldName}" value="@item.FieldDisplayName"></text>
+<text name="@{@data.Entity.Name@item.FieldName}InputDesc" value="请输入@{@item.FieldDisplayName}"></text></pre> 
                     }
-                    else{string tmpStr = "\"" + item.FieldName + "\": \"" + item.FieldDisplayName + "\",\r\n";
+                    else
+                    {
+                        string tmpStr = "<text name=\"" + item.FieldName + "\" value=\"" + item.FieldDisplayName + "\"></text>\r\n";
                         @tmpStr
                     }       
                 }
-            }       
-					 <pre>                    
-                    "@{@data.Entity.Name}": "@{@data.Entity.EntityDisplayName}",
-                    "Manage@{@data.Entity.Name}": "管理@{@data.Entity.EntityDisplayName}",
-                    "Query@{@data.Entity.Name}": "查询@{@data.Entity.EntityDisplayName}",
-                    "Create@{@data.Entity.Name}": "添加@{@data.Entity.EntityDisplayName}",
-                    "Edit@{@data.Entity.Name}": "编辑@{@data.Entity.EntityDisplayName}",
-                    "Delete@{@data.Entity.Name}": "删除@{@data.Entity.EntityDisplayName}",
-                    "BatchDelete@{@data.Entity.Name}": "批量删除@{@data.Entity.EntityDisplayName}",
-                    "Export@{@data.Entity.Name}": "导出@{@data.Entity.EntityDisplayName}",
-                    "@{@data.Entity.Name}List": "@{@data.Entity.EntityDisplayName}列表",
-                     //@{@data.Entity.EntityDisplayName}的多语言配置==End
-                    </pre>
+            }
+<pre>                    
+<text name="@{@data.Entity.Name}" value="@{@data.Entity.EntityDisplayName}"></text>
+<text name="Manage@{@data.Entity.Name}" value="管理@{@data.Entity.EntityDisplayName}"></text>
+<text name="Query@{@data.Entity.Name}" value="查询@{@data.Entity.EntityDisplayName}"></text>
+<text name="Create@{@data.Entity.Name}" value="添加@{@data.Entity.EntityDisplayName}"></text>
+<text name="Edit@{@data.Entity.Name}" value="编辑@{@data.Entity.EntityDisplayName}"></text>
+<text name="Delete@{@data.Entity.Name}" value="删除@{@data.Entity.EntityDisplayName}"></text>
+<text name="BatchDelete@{@data.Entity.Name}" value="批量删除@{@data.Entity.EntityDisplayName}"></text>
+<text name="Export@{@data.Entity.Name}" value="导出@{@data.Entity.EntityDisplayName}"></text>
+<text name="@{@data.Entity.Name}List" value="@{@data.Entity.EntityDisplayName}列表"></text>
+<!--@{@data.Entity.EntityDisplayName}的多语言配置==End-->
+</pre>
 
 
         }
