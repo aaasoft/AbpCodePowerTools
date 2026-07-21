@@ -35,7 +35,7 @@
     <ProjectReference Include="..\AbpCodePowerTools.Model\AbpCodePowerTools.Model.csproj" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\ResourceFiles\**\*">

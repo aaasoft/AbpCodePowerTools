@@ -114,7 +114,7 @@ public static class SyntaxEx
 
 	public static List<string> GetFilteredAttributeStringList(this SyntaxList<AttributeListSyntax> attributeGroups)
 	{
-		List<AttributeListSyntax?> list = (from a in attributeGroups
+		var list = (from a in attributeGroups
 			where a.Attributes.Any((AttributeSyntax att) => _attributDataAnnotationToPreserve.Contains(att.Name.ToString()))
 			select a.RemoveNodes(a.Attributes.Where((AttributeSyntax att) => !_attributDataAnnotationToPreserve.Contains(att.Name.ToString())).ToArray(), SyntaxRemoveOptions.KeepNoTrivia)).ToList();
 		List<string> list2 = new List<string>();

@@ -31,7 +31,7 @@ public static class BaiduTranslateService
 			string text8 = streamReader.ReadToEnd();
 			streamReader.Close();
 			responseStream.Close();
-			TransRoot? transRoot = JsonConvert.DeserializeObject<TransRoot>(text8);
+			var transRoot = JsonConvert.DeserializeObject<TransRoot>(text8);
 			if (string.IsNullOrEmpty(transRoot.to))
 			{
 				throw new Exception("翻译错误！百度api错误信息：" + text8.ToString());
