@@ -147,7 +147,7 @@ public static class SyntaxEx
 	{
 		string text = string.Empty;
 		string text2 = propertyNode.Modifiers.ToList().FirstOrDefault().LeadingTrivia.ToString();
-		if (!string.IsNullOrWhiteSpace(text))
+		if (string.IsNullOrWhiteSpace(text))
 		{
 			string[] array = text2.Split(BR, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string text3 in array)
@@ -159,7 +159,19 @@ public static class SyntaxEx
 				}
 			}
 		}
-		if (string.IsNullOrWhiteSpace(text))
+        if (string.IsNullOrWhiteSpace(text))
+        {
+			var descriptionString = propertyNode.AttributeLists
+				.FirstOrDefault(t => t.ToString().Contains("[Description("))?
+				.ToString();
+            if (!string.IsNullOrWhiteSpace(descriptionString))
+            {
+                var startIndex = descriptionString.IndexOf('\"') + 1;
+                var endIndex = descriptionString.LastIndexOf('\"');
+                text = descriptionString.Substring(startIndex, endIndex - startIndex);
+            }
+        }
+        if (string.IsNullOrWhiteSpace(text))
 		{
 			text = propertyNode.Identifier.Text;
 		}
