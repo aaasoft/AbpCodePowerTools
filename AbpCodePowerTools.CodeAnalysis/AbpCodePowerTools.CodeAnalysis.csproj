@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AbpCodePowerTools.CodeAnalysis</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup>
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\AbpCodePowerTools.Common\AbpCodePowerTools.Common.csproj" />
+	<ProjectReference Include="..\AbpCodePowerTools.Model\AbpCodePowerTools.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
+</Project>

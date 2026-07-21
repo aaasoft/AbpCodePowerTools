@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AbpCodePowerTools.CodeAnalysis/AbpCodePowerTools.CodeAnalysis.csproj" />
+  <Project Path="AbpCodePowerTools.Common/AbpCodePowerTools.Common.csproj" />
+  <Project Path="AbpCodePowerTools.Model/AbpCodePowerTools.Model.csproj" />
+  <Project DefaultStartup="true" Path="AbpCodePowerTools.UI/AbpCodePowerTools.UI.csproj" />
+</Solution>
