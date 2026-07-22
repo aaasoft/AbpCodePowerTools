@@ -22,12 +22,12 @@
 		<None Remove="imgs\wechat.png" />
 		<None Remove="imgs\joinqgroup.png" />
 		<None Remove="imgs\button.png" />
-		<EmbeddedResource Include="imgs\helpdoc.png" LogicalName="imgs/helpdoc.png" />
+		<Resource Include="imgs\helpdoc.png" LogicalName="imgs/helpdoc.png" />
 		<EmbeddedResource Include="easyicon_net_32.ico" LogicalName="easyicon_net_32.ico" />
-		<EmbeddedResource Include="imgs\logo.png" LogicalName="imgs/logo.png" />
-		<EmbeddedResource Include="imgs\wechat.png" LogicalName="imgs/wechat.png" />
-		<EmbeddedResource Include="imgs\joinqgroup.png" LogicalName="imgs/joinqgroup.png" />
-		<EmbeddedResource Include="imgs\button.png" LogicalName="imgs/button.png" />
+		<Resource Include="imgs\logo.png" LogicalName="imgs/logo.png" />
+		<Resource Include="imgs\wechat.png" LogicalName="imgs/wechat.png" />
+		<Resource Include="imgs\joinqgroup.png" LogicalName="imgs/joinqgroup.png" />
+		<Resource Include="imgs\button.png" LogicalName="imgs/button.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\AbpCodePowerTools.CodeAnalysis\AbpCodePowerTools.CodeAnalysis.csproj" />
@@ -38,9 +38,6 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="Resources\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
 		<Content Include="Templates\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

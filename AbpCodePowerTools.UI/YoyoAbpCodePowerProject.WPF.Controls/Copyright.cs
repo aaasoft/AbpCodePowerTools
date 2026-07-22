@@ -12,7 +12,7 @@ public partial class Copyright : UserControl, IComponentConnector
 	public Copyright()
 	{
 		InitializeComponent();
-		txtVersion.Text = "5.0.1";
+		txtVersion.Text = AppConsts.Version;
 		txtTime.Text = AppConsts.StartAppTime;
 		txtDateYear.Text = DateTime.Now.Year.ToString();
 	}
