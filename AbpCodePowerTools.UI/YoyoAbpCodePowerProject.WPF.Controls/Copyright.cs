@@ -14,12 +14,5 @@ public partial class Copyright : UserControl, IComponentConnector
 		InitializeComponent();
 		txtVersion.Text = AppConsts.Version;
 		txtTime.Text = AppConsts.StartAppTime;
-		txtDateYear.Text = DateTime.Now.Year.ToString();
-	}
-
-	private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
-	{
-		Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-		e.Handled = true;
 	}
 }

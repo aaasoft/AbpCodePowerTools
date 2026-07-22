@@ -66,10 +66,8 @@
           <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="https://www.52abp.com/images/52logo.png" />
-        <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="#fff" Text="52ABP代码生成器" />
-        <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <TextBlock Foreground="#fff" Text="官方网站" /> <Hyperlink NavigateUri="http://www.52abp.com" RequestNavigate="Hyperlink_RequestNavigate"><TextBlock Foreground="#fff" Text="www.52abp.com" /></Hyperlink></TextBlock>
-      </Grid>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="#fff" Text="52ABP代码生成器" />
+            </Grid>
     </Border>
     <Grid Row="1">
       <Label HorizontalAlignment="Left" Content="实体中文显示名称：" />
@@ -94,9 +92,6 @@
         </GridView>
       </ListView.View>
     </ListView>
-    <Border Grid.Row="3" Margin="10,0" Padding="0,5,0,5" BorderBrush="#898989" BorderThickness="0,0,0,0">
-      <ctrl:Footer />
-    </Border>
     <Border Grid.Row="4" Margin="10,0,10,0" Padding="0,10,0,10" BorderBrush="#898989" BorderThickness="0,0,0,1">
       <Grid>
         <Grid.ColumnDefinitions>

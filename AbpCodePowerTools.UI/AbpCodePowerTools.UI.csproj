@@ -16,18 +16,8 @@
 		<RootNamespace />
 	</PropertyGroup>
 	<ItemGroup>
-		<None Remove="imgs\helpdoc.png" />
 		<None Remove="easyicon_net_32.ico" />
-		<None Remove="imgs\logo.png" />
-		<None Remove="imgs\wechat.png" />
-		<None Remove="imgs\joinqgroup.png" />
-		<None Remove="imgs\button.png" />
-		<Resource Include="imgs\helpdoc.png" LogicalName="imgs/helpdoc.png" />
 		<EmbeddedResource Include="easyicon_net_32.ico" LogicalName="easyicon_net_32.ico" />
-		<Resource Include="imgs\logo.png" LogicalName="imgs/logo.png" />
-		<Resource Include="imgs\wechat.png" LogicalName="imgs/wechat.png" />
-		<Resource Include="imgs\joinqgroup.png" LogicalName="imgs/joinqgroup.png" />
-		<Resource Include="imgs\button.png" LogicalName="imgs/button.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\AbpCodePowerTools.CodeAnalysis\AbpCodePowerTools.CodeAnalysis.csproj" />

@@ -42,11 +42,6 @@ namespace @data.Entity.Namespace
     {
         
           private readonly IModelAuditHistoryManager _modelAuditHistoryManager;
-        @if (option.UseExportExcel)
-        {<pre> private readonly I@{@data.Entity.Name}ListExcelExporter _@{@data.Entity.LowerName}ListExcelExporter;
-                private readonly ImportManager<@{@data.Entity.Name}ImportDto> _importManager;
-
-        </pre>}
 
         @if (isHaveEnums)
         {<pre> private readonly IEnumExtensionsAppService _enumExtensionsAppService;</pre>}
@@ -62,10 +57,7 @@ namespace @data.Entity.Namespace
             @data.ReplaceInfo.IEntityNameManager,
             ISqlExecutor sqlExecutor,
               IModelAuditHistoryManager modelAuditHistoryManager,
-            @if (option.UseExportExcel)
-            {<pre>@{@data.Entity.Name}ListExcelExporter @{@data.Entity.LowerName}ListExcelExporter,
-            ImportManager<@{@data.Entity.Name}ImportDto> importManager,</pre>}
-
+            
             @if (isHaveEnums)
             {<pre>IEnumExtensionsAppService enumExtensionsAppService</pre>}
             )
@@ -74,10 +66,6 @@ namespace @data.Entity.Namespace
              @data.ReplaceInfo.EntityNameManager
                 _modelAuditHistoryManager = modelAuditHistoryManager;
              _sqlExecutor = sqlExecutor;
-
-            @if (option.UseExportExcel)
-            {<pre>_@{@data.Entity.LowerName}ListExcelExporter = @{@data.Entity.LowerName}ListExcelExporter;
-                        _importManager = importManager;            </pre>}
 
             @if (isHaveEnums)
             {<pre> _enumExtensionsAppService = enumExtensionsAppService;</pre>}
@@ -463,59 +451,6 @@ namespace @data.Entity.Namespace
         }
 
         #endregion 增值内容
-
-
-
-        
-		@if (option.UseExportExcel){
-		<pre>
-
-
-        /// <summary>
-        /// 导入@{@data.Entity.Name}信息
-        /// </summary>
-        /// <param name="fileToken"></param>
-        /// <returns></returns>
-        public async Task<ExcelImpDto<@{@data.Entity.Name}ImportDto>> Import@{@data.Entity.Name}(string fileToken)
-        {
-            throw new NotImplementedException();
-        }
-
-
-		/// <summary>
-		/// 导出@{@data.Entity.EntityDisplayName}为excel文件
-		/// </summary>
-		/// <returns></returns>
-		@data.ReplaceInfo.PermissionExportExcel
-		public async Task<FileDto> GetToExcelFile()
-		{
-		   var @{@data.Entity.LowerName}s = await _@{@data.Entity.LowerName}Manager.QueryAsNoTracking.ToListAsync();
-            var @{@data.Entity.LowerName}ListDtos = ObjectMapper.Map<List<@{@data.Entity.Name}ExportDto>>(@{@data.Entity.LowerName}s);
-            return _@{@data.Entity.LowerName}ListExcelExporter.ExportToExcelFile(@{@data.Entity.LowerName}ListDtos);
-		}
-
-
-		   /// <summary>
-        /// 下载Excel模板
-        /// </summary>
-        /// <returns></returns>
-        public async Task<FileDto> DownloadExcelTemplate()
-        {
-
-        return await _importManager.GenerateTemplate("@{@data.Entity.EntityDisplayName}导入模板.xlsx");
-
-        }
-
-
-       
-
-		</pre>
-
-		}
-
-        
-
-
 
         #region 原生sql用法示例
 

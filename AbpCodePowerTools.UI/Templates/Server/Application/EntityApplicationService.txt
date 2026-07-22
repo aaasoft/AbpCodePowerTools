@@ -21,8 +21,6 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using @data.Entity.Namespace;
 using @{@data.Entity.Namespace}.Dtos;
-@if (option.UseExportExcel)
-{<pre>using @{@data.Entity.Namespace}.Exporting;</pre>}
 @data.ReplaceInfo.DomainServicesNamespace
 using @data.ReplaceInfo.CompanyNamespace@{@data.ReplaceInfo.SolutionNamespace}.Authorization;
 
@@ -38,9 +36,6 @@ namespace @data.Entity.Namespace
     {
 		private IRepository<@{@data.Entity.Name}, @{@data.Entity.EntityKeyName}> _@{@data.Entity.LowerName}Repository;
 
-        @if (option.UseExportExcel)
-        {<pre> private readonly I@{@data.Entity.Name}ListExcelExporter _@{@data.Entity.LowerName}ListExcelExporter;</pre>}
-
         @if (isHaveEnums)
         {<pre> private readonly IEnumExtensionsAppService _enumExtensionsAppService;</pre>}
 
@@ -53,18 +48,14 @@ namespace @data.Entity.Namespace
 
         public @{@data.Entity.Name}AppService(IRepository<@{@data.Entity.Name}, @{@data.Entity.EntityKeyName}> @{@data.Entity.LowerName}Repository,
 			@data.ReplaceInfo.IEntityNameManager
-            @if (option.UseExportExcel)
-            {<pre>,@{@data.Entity.Name}ListExcelExporter @{@data.Entity.LowerName}ListExcelExporter</pre>}
-
+            
             @if (isHaveEnums)
             {<pre>, IEnumExtensionsAppService enumExtensionsAppService</pre>}
             )
             {
 			_@{@data.Entity.LowerName}Repository = @{@data.Entity.LowerName}Repository;
             @data.ReplaceInfo.EntityNameManager
-            @if (option.UseExportExcel)
-            {<pre>_@{@data.Entity.LowerName}ListExcelExporter = @{@data.Entity.LowerName}ListExcelExporter;</pre>}
-
+            
             @if (isHaveEnums)
             {<pre> _enumExtensionsAppService = enumExtensionsAppService;</pre>}
 
@@ -223,26 +214,6 @@ var query = _@{@data.Entity.LowerName}Repository.GetAll()
 		{
 			// TODO:批量删除前的逻辑判断，是否允许删除
             await _@{@data.Entity.LowerName}Manager.BatchDelete(input);
-		}
-
-
-
-		@if (option.UseExportExcel){
-		<pre>
-		/// <summary>
-		/// 导出@{@data.Entity.EntityDisplayName}为excel文件
-		/// </summary>
-		/// <returns></returns>
-		@data.ReplaceInfo.PermissionExportExcel
-		public async Task<FileDto> GetToExcelFile()
-		{
-		   var @{@data.Entity.LowerName}s = await _@{@data.Entity.LowerName}Repository.GetAll().ToListAsync();
-            var @{@data.Entity.LowerName}ListDtos = ObjectMapper.Map<List<@{@data.Entity.Name}ListDto>>(@{@data.Entity.LowerName}s);
-            return _@{@data.Entity.LowerName}ListExcelExporter.ExportToExcelFile(@{@data.Entity.LowerName}ListDtos);
-		}
-
-		</pre>
-
 		}
 
 							//// custom codes

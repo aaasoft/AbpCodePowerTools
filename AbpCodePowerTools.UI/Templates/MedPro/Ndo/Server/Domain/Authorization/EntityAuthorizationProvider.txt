@@ -66,14 +66,6 @@ namespace @data.ReplaceInfo.CompanyNamespace@{@data.ReplaceInfo.SolutionNamespac
 			@{@data.Entity.LowerName}.CreateChildPermission(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Delete, L("Delete"));
             @{@data.Entity.LowerName}.CreateChildPermission(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_Copy, L("Copy"));
 
-            @if(option.UseExportExcel){
-		
-		<pre>			
-            @{@data.Entity.LowerName}.CreateChildPermission(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_ExportExcel, L("ExportToExcel"));
-			@{@data.Entity.LowerName}.CreateChildPermission(@{@data.Entity.Name}Permissions.@{@data.Entity.Name}_ImportExcel, L("ImportToExcel"));
-	</pre>
-		}
-
 
 							//// custom codes
 									

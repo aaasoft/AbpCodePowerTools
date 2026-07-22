@@ -43,21 +43,6 @@ namespace @data.ReplaceInfo.CompanyNamespace@{@data.ReplaceInfo.SolutionNamespac
 		///</summary>
 		public const string @{@data.Entity.Name}_Copy="Pages.@{@data.Entity.Name}.Copy";
 
-		@if(option.UseExportExcel){
-		
-		<pre>
-		/// <summary>
-		/// @{@data.Entity.EntityDisplayName}导出Excel
-		///</summary>
-		public const string @{@data.Entity.Name}_ExportExcel="Pages.@{@data.Entity.Name}.ExportExcel";	 
-
-		/// <summary>
-		/// 从excel文件导入@{@data.Entity.EntityDisplayName}数据
-		///</summary>
-		public const string @{@data.Entity.Name}_ImportExcel="Pages.@{@data.Entity.Name}.ImportExcel";
-		</pre>
-		}
-
 		//// custom codes
 					
 			

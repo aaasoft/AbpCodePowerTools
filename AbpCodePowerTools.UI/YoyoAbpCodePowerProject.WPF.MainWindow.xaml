@@ -50,8 +50,6 @@
         </Grid.ColumnDefinitions>
         <Image Source="https://www.52abp.com/imgs/logos/52abplogo-180.png" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
         <TextBlock Text="52ABP-Pro代码生成器(支持.NET Core 3.1)" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="#fff" Grid.ColumnSpan="3" Margin="240,16,200,16" Width="322" />
-        <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-          <TextBlock Text="官方网站" Foreground="#fff" RenderTransformOrigin="0.771,0.533" /> <Hyperlink NavigateUri="http://www.52abp.com" RequestNavigate="Hyperlink_RequestNavigate"><TextBlock Text="www.52abp.com" Foreground="#fff" /></Hyperlink></TextBlock>
       </Grid>
     </Border>
     <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="#898989" Margin="10,0" Padding="0,10,0,15">
@@ -99,7 +97,6 @@
           <StackPanel Grid.Column="2">
             <TextBlock Text="应用服务层" HorizontalAlignment="Center" FontSize="13" FontWeight="Bold" />
             <CheckBox Content="生成应用服务" Margin="20 10 0 0" Foreground="#898989" IsChecked="{Binding OptionCfg.UseApplicationServiceCode, Mode=TwoWay}" />
-            <CheckBox Content="导入及导出Excel" Margin="20 5 0 0" Foreground="#898989" IsChecked="{Binding OptionCfg.UseExportExcel, Mode=TwoWay}" />
           </StackPanel>
           <StackPanel Grid.Column="1">
             <TextBlock Text="前端配置" HorizontalAlignment="Center" FontSize="13" FontWeight="Bold" />
@@ -111,26 +108,8 @@
             <CheckBox Content="生成领域层服务" Margin="20 10 0 0" Foreground="#898989" IsChecked="{Binding OptionCfg.UseDomainManagerCode, Mode=TwoWay}" />
             <CheckBox Content="生成权限服务" Margin="20 5 0 0" Foreground="#898989" IsChecked="{Binding OptionCfg.UseDomainAuthorizeCode, Mode=TwoWay}" />
           </StackPanel>
-          <StackPanel Grid.Column="4">
-            <TextBlock Text="基础设施层" HorizontalAlignment="Center" FontSize="13" FontWeight="Bold" />
-            <CheckBox Content="Ful" Margin="20 10 0 0" Foreground="#898989" IsEnabled="False" />
-            <CheckBox Content="生成单元测试类" Margin="20 5 0 0" Foreground="#898989" IsChecked="{Binding OptionCfg.UseXUnitTests, Mode=TwoWay}" />
-          </StackPanel>
-          <StackPanel Grid.Column="5" IsEnabled="False">
-            <TextBlock Text="管理端 (MVC类库)" HorizontalAlignment="Center" FontSize="13" FontWeight="Bold" />
-            <CheckBox Content="生成控制器" Margin="20 10 0 0" Foreground="#898989" />
-            <CheckBox Content="生成视图页面" Margin="20 5 0 0" Foreground="#898989" />
-          </StackPanel>
-          <StackPanel Grid.Column="6" IsEnabled="False">
-            <TextBlock Text="增值内容" HorizontalAlignment="Center" FontSize="13" FontWeight="Bold" />
-            <CheckBox Content="XXXX" Margin="20 10 0 0" Foreground="#898989" IsEnabled="False" />
-            <CheckBox Content="生成视图页面" Margin="20 5 0 0" Foreground="#898989" />
-          </StackPanel>
         </Grid>
       </Grid>
-    </Border>
-    <Border Grid.Row="3" BorderThickness="0,0,0,0" BorderBrush="#898989" Margin="10,0" Padding="0,10,0,15">
-      <ctrl:Footer Margin="0,7.02,0,-7.02" />
     </Border>
     <Border Grid.Row="4" BorderThickness="0,0,0,1" BorderBrush="#898989" Margin="10,0,10,0" Padding="0,10,0,10">
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

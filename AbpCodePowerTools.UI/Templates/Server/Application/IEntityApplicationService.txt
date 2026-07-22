@@ -62,20 +62,6 @@ namespace @data.Entity.Namespace
         /// </summary>
         Task BatchDelete(List<@data.Entity.EntityKeyName> input);
 
-
-		@if (option.UseExportExcel){
-		<pre>
-		
-		/// <summary>
-		/// 导出@{@data.Entity.EntityDisplayName}为excel文件
-		/// </summary>
-		/// <returns></returns>
-		Task<FileDto> GetToExcelFile();
-		
-		
-		</pre>
-		
-		} 
 		
 							//// custom codes
 									

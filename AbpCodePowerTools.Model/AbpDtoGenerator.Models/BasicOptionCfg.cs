@@ -13,8 +13,6 @@ public class BasicOptionCfg : BaseViewModel
 
 	private bool useApplicationServiceCode;
 
-	private bool useExportExcel;
-
 	private bool useNgZorro;
 
 	private bool useDomainAuthorizeCode;
@@ -80,20 +78,6 @@ public class BasicOptionCfg : BaseViewModel
 			useApplicationServiceCode = value;
 			CheckIsAllGeneratorCode();
 			InvokePropertyChanged("UseApplicationServiceCode");
-		}
-	}
-
-	public bool UseExportExcel
-	{
-		get
-		{
-			return useExportExcel;
-		}
-		set
-		{
-			useExportExcel = value;
-			CheckIsAllGeneratorCode();
-			InvokePropertyChanged("UseExportExcel");
 		}
 	}
 
@@ -205,20 +189,18 @@ public class BasicOptionCfg : BaseViewModel
 		useDomainManagerCode = isAllGeneratorCode;
 		useApplicationServiceCode = isAllGeneratorCode;
 		useNgZorro = isAllGeneratorCode;
-		useExportExcel = isAllGeneratorCode;
 		useXUnitTests = isAllGeneratorCode;
 		InvokePropertyChanged("IsAllGeneratorCode");
 		InvokePropertyChanged("UseDomainAuthorizeCode");
 		InvokePropertyChanged("UseDomainManagerCode");
 		InvokePropertyChanged("UseApplicationServiceCode");
 		InvokePropertyChanged("UseNgZorro");
-		InvokePropertyChanged("UseExportExcel");
 		InvokePropertyChanged("UseXUnitTests");
 	}
 
 	private void CheckIsAllGeneratorCode()
 	{
-		isAllGeneratorCode = useDomainAuthorizeCode && useDomainManagerCode && useApplicationServiceCode && useNgZorro && useExportExcel && useXUnitTests;
+		isAllGeneratorCode = useDomainAuthorizeCode && useDomainManagerCode && useApplicationServiceCode && useNgZorro && useXUnitTests;
 		InvokePropertyChanged("IsAllGeneratorCode");
 	}
 

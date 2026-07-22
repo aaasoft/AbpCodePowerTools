@@ -23,17 +23,6 @@ public static class GenMedProRdoCodeTemplate
 			string basePath = Global.SolutionInfo.Application.BasePath;
 			string buildPath = Path.Combine(basePath, entityDir, "Mapper", entity.Name + "DtoAutoMapper.cs");
 			list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\MedPro\\Rdo\\Server\\Application\\Mapper\\EntityDtoAutoMapper.txt"), buildPath));
-			if (option.UseExportExcel)
-			{
-				buildPath = Path.Combine(basePath, entityDir, "Exporting", "Dtos", entity.Name + "ExportDto.cs");
-				list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\MedPro\\Rdo\\Server\\Application\\Dtos\\EntityExportDto.txt"), buildPath));
-				buildPath = Path.Combine(basePath, entityDir, "Exporting", "Dtos", entity.Name + "ImportDto.cs");
-				list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\MedPro\\Rdo\\Server\\Application\\Dtos\\EntityImportDto.txt"), buildPath));
-				buildPath = Path.Combine(basePath, entityDir, "Exporting", "I" + entity.Name + "ListExcelExporter.cs");
-				list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\MedPro\\Rdo\\Server\\Application\\Exporting\\IEntityListExcelExporter.txt"), buildPath));
-				buildPath = Path.Combine(basePath, entityDir, "Exporting", entity.Name + "ListExcelExporter.cs");
-				list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\MedPro\\Rdo\\Server\\Application\\Exporting\\EntityListExcelExporter.txt"), buildPath));
-			}
 			buildPath = Path.Combine(basePath, entityDir, "I" + entity.Name + "AppService.cs");
 			list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\MedPro\\Rdo\\Server\\Application\\IEntityApplicationService.txt"), buildPath));
 			buildPath = Path.Combine(basePath, entityDir, entity.Name + "AppService.cs");

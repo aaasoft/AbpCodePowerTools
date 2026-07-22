@@ -80,35 +80,6 @@ namespace @data.Entity.Namespace
         /// </summary>
         /// <returns></returns>
         Task<List<@{@data.Entity.Name}ListDto>> GetAllBySql();
-
-
-
-		@if (option.UseExportExcel){
-		<pre>
-
-
-        /// <summary>
-        /// 下载Excel模板
-        /// </summary>
-        /// <returns></returns>
-        Task<FileDto> DownloadExcelTemplate();
-
-        /// <summary>
-        /// 导入@{@data.Entity.EntityDisplayName}信息  
-        /// </summary>
-        /// <param name="fileToken"></param>
-        /// <returns></returns>
-        Task<ExcelImpDto<@{@data.Entity.Name}ImportDto>> Import@{@data.Entity.Name}(string fileToken);
-
-		
-		/// <summary>
-		/// 导出@{@data.Entity.EntityDisplayName}为excel文件
-		/// </summary>
-		/// <returns></returns>
-		Task<FileDto> GetToExcelFile();
-		
-		
-		</pre>
 		
 		} 
 		

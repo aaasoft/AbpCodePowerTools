@@ -27,20 +27,6 @@ namespace @data.ReplaceInfo.CompanyNamespace@{@data.ReplaceInfo.SolutionNamespac
             configuration.CreateMap <@{@data.Entity.Name},@{@data.Entity.Name}EditDto>();
 					
 
-
-
-
-                    
-        @if (option.UseExportExcel){
-        <pre>
-                 //增值内容：excel导入导出功能
-              configuration.CreateMap<@{@data.Entity.Name}ImportDto, @{@data.Entity.Name}>();
-              configuration.CreateMap <@{@data.Entity.Name},@{@data.Entity.Name}ExportDto>();
- 
-        </pre>
-                    } 
-
-
 							//// custom codes
 									
 							

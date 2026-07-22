@@ -23,13 +23,6 @@ public static class Gen52AbpProCodeTemplate
 			string basePath = Global.SolutionInfo.Application.BasePath;
 			string buildPath = Path.Combine(basePath, entityDir, "Mapper", entity.Name + "DtoAutoMapper.cs");
 			list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\Server\\Application\\Mapper\\EntityDtoAutoMapper.txt"), buildPath));
-			if (option.UseExportExcel)
-			{
-				buildPath = Path.Combine(basePath, entityDir, "Exporting", "I" + entity.Name + "ListExcelExporter.cs");
-				list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\Server\\Application\\Exporting\\IEntityListExcelExporter.txt"), buildPath));
-				buildPath = Path.Combine(basePath, entityDir, "Exporting", entity.Name + "ListExcelExporter.cs");
-				list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\Server\\Application\\Exporting\\EntityListExcelExporter.txt"), buildPath));
-			}
 			buildPath = Path.Combine(basePath, entityDir, "I" + entity.Name + "AppService.cs");
 			list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\Server\\Application\\IEntityApplicationService.txt"), buildPath));
 			buildPath = Path.Combine(basePath, entityDir, entity.Name + "AppService.cs");
