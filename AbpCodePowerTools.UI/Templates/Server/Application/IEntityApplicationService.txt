@@ -7,12 +7,9 @@
 using System;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using L._52ABP.Application.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using @{@data.Entity.Namespace}.Dtos;
-using @data.Entity.Namespace;
-
 
 
 namespace @data.Entity.Namespace

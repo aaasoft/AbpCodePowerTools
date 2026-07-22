@@ -10,11 +10,8 @@ using Abp.Domain.Services;
 
 namespace @{@data.Entity.Namespace}.DomainService
 {
-    public interface I@{@data.Entity.Name}Manager  : I52AbpDomainService<@{@data.Entity.Name},@{@data.Entity.EntityKeyName}>
-    {
-
-
-		 
+    public interface I@{@data.Entity.Name}Manager  : IDomainService
+    {	
 		  
 	
 		/// <summary>

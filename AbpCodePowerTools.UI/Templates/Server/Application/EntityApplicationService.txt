@@ -12,8 +12,6 @@ using Abp.AutoMapper;
 using Abp.Linq.Extensions;
 using Abp.Extensions;
 using Abp.Domain.Repositories;
-using L._52ABP.Application.Dtos;
-using L._52ABP.Common.Extensions.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,7 +21,8 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using @data.Entity.Namespace;
 using @{@data.Entity.Namespace}.Dtos;
-using @{@data.Entity.Namespace}.Exporting;
+@if (option.UseExportExcel)
+{<pre>using @{@data.Entity.Namespace}.Exporting;</pre>}
 @data.ReplaceInfo.DomainServicesNamespace
 using @data.ReplaceInfo.CompanyNamespace@{@data.ReplaceInfo.SolutionNamespace}.Authorization;
 
@@ -37,7 +36,7 @@ namespace @data.Entity.Namespace
     [AbpAuthorize]
     public class @{@data.Entity.Name}AppService : @{@data.ReplaceInfo.SolutionNamespace}AppServiceBase, I@{@data.Entity.Name}AppService
     {
-		 
+		private IRepository<@{@data.Entity.Name}, @{@data.Entity.EntityKeyName}> _@{@data.Entity.LowerName}Repository;
 
         @if (option.UseExportExcel)
         {<pre> private readonly I@{@data.Entity.Name}ListExcelExporter _@{@data.Entity.LowerName}ListExcelExporter;</pre>}
@@ -52,14 +51,16 @@ namespace @data.Entity.Namespace
         /// 构造函数
         ///</summary>
 
-        public @{@data.Entity.Name}AppService( @data.ReplaceInfo.IEntityNameManager
+        public @{@data.Entity.Name}AppService(IRepository<@{@data.Entity.Name}, @{@data.Entity.EntityKeyName}> @{@data.Entity.LowerName}Repository,
+			@data.ReplaceInfo.IEntityNameManager
             @if (option.UseExportExcel)
             {<pre>,@{@data.Entity.Name}ListExcelExporter @{@data.Entity.LowerName}ListExcelExporter</pre>}
 
             @if (isHaveEnums)
             {<pre>, IEnumExtensionsAppService enumExtensionsAppService</pre>}
             )
-            {             
+            {
+			_@{@data.Entity.LowerName}Repository = @{@data.Entity.LowerName}Repository;
             @data.ReplaceInfo.EntityNameManager
             @if (option.UseExportExcel)
             {<pre>_@{@data.Entity.LowerName}ListExcelExporter = @{@data.Entity.LowerName}ListExcelExporter;</pre>}
@@ -79,21 +80,10 @@ namespace @data.Entity.Namespace
             public async Task<PagedResultDto<@{@data.Entity.Name}ListDto>> GetPaged(Get@{@data.Entity.Name}sInput input)
     {
 
-var query = _@{@data.Entity.LowerName}Manager.Query.WhereIf(!input.FilterText.IsNullOrWhiteSpace(), a =>
-    @{ foreach (var item in data.Entity.Properties)
-        {
-            if (item.FieldTypeStr == "string")
-            {
-                <pre>
-              //模糊搜索@{@item.FieldDisplayName}
-			  a.@{@item.FieldName}.Contains(input.FilterText)||
-			  
-			  
-
-			</pre> }
-        } }
-);
-    // TODO:根据传入的参数添加过滤条件
+var query = _@{@data.Entity.LowerName}Repository.GetAll()
+	// TODO:根据传入的参数添加过滤条件
+	//WhereIf(!input.FilterText.IsNullOrWhiteSpace(), t=> xxx)
+	;    
 
     var count = await query.CountAsync();
 
@@ -114,7 +104,7 @@ var query = _@{@data.Entity.LowerName}Manager.Query.WhereIf(!input.FilterText.Is
 		@data.ReplaceInfo.PermissionQuery
 		public async Task<@{@data.Entity.Name}ListDto> GetById(EntityDto<@data.Entity.EntityKeyName> input)
 		{
-			var entity = await _@{@data.Entity.LowerName}Manager.EntityRepo.GetAsync(input.Id);
+			var entity = await _@{@data.Entity.LowerName}Repository.GetAsync(input.Id);
 
 			var dto = ObjectMapper.Map<@{@data.Entity.Name}ListDto>(entity);
 			return dto;
@@ -135,7 +125,7 @@ var query = _@{@data.Entity.LowerName}Manager.Query.WhereIf(!input.FilterText.Is
 			{
 			
 
-				var entity = await _@{@data.Entity.LowerName}Manager.EntityRepo.GetAsync(input.Id.Value);
+				var entity = await _@{@data.Entity.LowerName}Repository.GetAsync(input.Id.Value);
 				editDto = ObjectMapper.Map<@{@data.Entity.Name}EditDto>(entity);
 			}
 			else
@@ -202,7 +192,7 @@ var query = _@{@data.Entity.LowerName}Manager.Query.WhereIf(!input.FilterText.Is
 		{
 			//TODO:更新前的逻辑判断，是否允许更新
 
-		 var entity = await _@{@data.Entity.LowerName}Manager.EntityRepo.GetAsync(input.Id.Value);
+		 var entity = await _@{@data.Entity.LowerName}Repository.GetAsync(input.Id.Value);
           //  input.MapTo(entity);
           //将input属性的值赋值到entity中
              ObjectMapper.Map(input, entity);
@@ -246,7 +236,7 @@ var query = _@{@data.Entity.LowerName}Manager.Query.WhereIf(!input.FilterText.Is
 		@data.ReplaceInfo.PermissionExportExcel
 		public async Task<FileDto> GetToExcelFile()
 		{
-		   var @{@data.Entity.LowerName}s = await _@{@data.Entity.LowerName}Manager.EntityRepo.GetAll().ToListAsync();
+		   var @{@data.Entity.LowerName}s = await _@{@data.Entity.LowerName}Repository.GetAll().ToListAsync();
             var @{@data.Entity.LowerName}ListDtos = ObjectMapper.Map<List<@{@data.Entity.Name}ListDto>>(@{@data.Entity.LowerName}s);
             return _@{@data.Entity.LowerName}ListExcelExporter.ExportToExcelFile(@{@data.Entity.LowerName}ListDtos);
 		}
