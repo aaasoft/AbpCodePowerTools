@@ -21,7 +21,7 @@ internal sealed class AbpCodePowerToolsCommand
 		commandService = commandService ?? throw new ArgumentNullException("commandService");
 		CommandID command = new CommandID(CommandSet, 256);
 		MenuCommand command2 = new MenuCommand(Execute, command);
-		((MenuCommandService)commandService).AddCommand(command2);
+		commandService.AddCommand(command2);
 	}
 
 	public static async Task InitializeAsync(AsyncPackage package)
