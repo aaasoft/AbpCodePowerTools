@@ -3,4 +3,7 @@
   <Project Path="AbpCodePowerTools.Common/AbpCodePowerTools.Common.csproj" />
   <Project Path="AbpCodePowerTools.Model/AbpCodePowerTools.Model.csproj" />
   <Project DefaultStartup="true" Path="AbpCodePowerTools.UI/AbpCodePowerTools.UI.csproj" />
+  <Project Path="AbpCodePowerTools/AbpCodePowerTools.csproj" Id="ea08bdae-b23e-42dd-bcce-8b935722acf9">
+    <Deploy />
+  </Project>
 </Solution>

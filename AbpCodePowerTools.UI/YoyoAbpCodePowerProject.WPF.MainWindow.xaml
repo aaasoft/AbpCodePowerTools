@@ -40,7 +40,7 @@
       <RowDefinition Height="50" />
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
-    <Border Name="title" BorderBrush="#898989" Padding="0 0 0 0" Background="#FFFFAD36">
+        <Border Name="title" BorderBrush="#898989" Padding="0 0 0 0" Background="#0085E1">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition />

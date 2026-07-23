@@ -1,40 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <AssemblyName>AbpCodePowerTools</AssemblyName>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <TargetFramework>net472</TargetFramework>
+    <LangVersion>14</LangVersion>
+
+    <!-- VSIX settings -->
+    <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
   </PropertyGroup>
-  <PropertyGroup>
-    <LangVersion>12.0</LangVersion>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace />
-  </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.Shell.15.0" />
-    <Reference Include="Microsoft.VisualStudio.Shell.Framework" />
-    <Reference Include="Microsoft.VisualStudio.Threading" />
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces" />
-    <Reference Include="EnvDTE" />
-    <Reference Include="EnvDTE80" />
-    <Reference Include="Microsoft.VisualStudio.ComponentModelHost" />
-    <Reference Include="AbpCodePowerTools.Model">
-      <HintPath>..\..\..\Downloads\werltm.52ABPCodeGenerator-5.0.2\AbpCodePowerTools.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.LanguageServices" />
+    <ProjectCapability Include="CreateVsixContainer" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="4.14.0" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.14.40265" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="18.8.739" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AbpCodePowerTools.CodeAnalysis\AbpCodePowerTools.CodeAnalysis.csproj" />
+    <ProjectReference Include="..\AbpCodePowerTools.Common\AbpCodePowerTools.Common.csproj" />
+    <ProjectReference Include="..\AbpCodePowerTools.Model\AbpCodePowerTools.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Design" />
-    <Reference Include="AbpCodePowerTools.CodeAnalysis">
-      <HintPath>..\..\..\Downloads\werltm.52ABPCodeGenerator-5.0.2\AbpCodePowerTools.CodeAnalysis.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="AbpCodePowerTools.Common">
-      <HintPath>..\..\..\Downloads\werltm.52ABPCodeGenerator-5.0.2\AbpCodePowerTools.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\Downloads\werltm.52ABPCodeGenerator-5.0.2\Newtonsoft.Json.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
