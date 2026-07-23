@@ -49,7 +49,7 @@
           <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Image Source="https://www.52abp.com/imgs/logos/52abplogo-180.png" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-        <TextBlock Text="52ABP-Pro代码生成器(支持.NET Core 3.1)" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="#fff" Grid.ColumnSpan="3" Margin="240,16,200,16" Width="322" />
+        <TextBlock Text="52ABP-Pro代码生成器" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="#fff" Grid.ColumnSpan="3" Margin="240,16,200,16" Width="322" />
       </Grid>
     </Border>
     <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="#898989" Margin="10,0" Padding="0,10,0,15">
