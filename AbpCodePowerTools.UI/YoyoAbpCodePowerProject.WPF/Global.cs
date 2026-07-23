@@ -11,8 +11,6 @@ namespace YoyoAbpCodePowerProject.WPF;
 
 public static class Global
 {
-	public static string SolutionPath { get; set; }
-
 	public static SolutionInfoModel SolutionInfo { get; set; }
 
 	public static MainPageViewModel MainViewModel { get; set; }
@@ -23,10 +21,9 @@ public static class Global
 
 	public static EntityModel Entity { get; set; }
 
-	public static void InitApplication(string solutionPath, string selectEntityPath)
+	public static void InitApplication(string solutionInfoModelContent)
 	{
-		SolutionPath = solutionPath;
-		SolutionInfo = JsonConvert.DeserializeObject<SolutionInfoModel>(File.ReadAllText(SolutionPath, Encoding.UTF8));
+		SolutionInfo = JsonConvert.DeserializeObject<SolutionInfoModel>(solutionInfoModelContent);
 		LoadEntityInfos();
 		CreateViewModels();
 	}

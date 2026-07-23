@@ -4,7 +4,6 @@ namespace AbpCodePowerTools.Model;
 
 public class AppConsts
 {
-	public const string SolutionInfo = "solutionInfo.json";
 
 	public const string MainABP_CodePowerExtendedModel = "52ABP_CodePowerExtendedModel";
 

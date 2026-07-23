@@ -70,13 +70,13 @@ public class AbpCodePowerToolsCommandExecute
                 currentSelectedDocument = list3.FirstOrDefault();
             }
             SolutionInfoModel solutionInfoModel = SolutionInfoCreator.Create(currentSelectedDocument);
-            string path = Path.Combine(solutionInfoModel.SolutionPath, "solutionInfo.json");
             string content = JsonConvert.SerializeObject(solutionInfoModel);
-            path.CreateFile(content);
-            ProcessStartInfo processStartInfo = new ProcessStartInfo();
-            processStartInfo.WorkingDirectory = Path.Combine(Path.GetDirectoryName(typeof(CommonConsts).Assembly.Location), "UI");
-            processStartInfo.FileName = "AbpCodePowerTools.UI.exe";
-            processStartInfo.Arguments = "\"" + solutionInfoModel.SolutionPath + "\"";
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = Path.Combine(Path.GetDirectoryName(typeof(CommonConsts).Assembly.Location), "UI", "AbpCodePowerTools.UI.exe"),
+                UseShellExecute = false
+            };
+            processStartInfo.Environment.Add($"{nameof(AbpCodePowerTools)}_{nameof(SolutionInfoModel)}", content);
             Process.Start(processStartInfo);
         }
         catch (Exception ex)

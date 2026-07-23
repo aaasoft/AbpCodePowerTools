@@ -38,5 +38,21 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<IncludeInVSIX>true</IncludeInVSIX>
 		</Content>
+		<Content Include="$(SolutionDir)AbpCodePowerTools.UI\bin\$(Configuration)\*\*\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
+		<Content Include="$(SolutionDir)AbpCodePowerTools.UI\bin\$(Configuration)\*\*\*\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
+		<Content Include="$(SolutionDir)AbpCodePowerTools.UI\bin\$(Configuration)\*\*\*\*\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
+		<Content Include="$(SolutionDir)AbpCodePowerTools.UI\bin\$(Configuration)\*\*\*\*\*\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
 	</ItemGroup>
 </Project>
