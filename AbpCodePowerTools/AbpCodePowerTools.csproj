@@ -1,35 +1,42 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-    <LangVersion>14</LangVersion>
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<LangVersion>14</LangVersion>
 
-    <!-- VSIX settings -->
-    <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
-    <GeneratePkgDefFile>true</GeneratePkgDefFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectCapability Include="CreateVsixContainer" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="4.14.0" />
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.14.40265" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="18.8.739" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AbpCodePowerTools.CodeAnalysis\AbpCodePowerTools.CodeAnalysis.csproj" />
-    <ProjectReference Include="..\AbpCodePowerTools.Common\AbpCodePowerTools.Common.csproj" />
-    <ProjectReference Include="..\AbpCodePowerTools.Model\AbpCodePowerTools.Model.csproj" />
-    <ProjectReference Include="..\AbpCodePowerTools.UI\AbpCodePowerTools.UI.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Design" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
+		<!-- VSIX settings -->
+		<VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
+		<GeneratePkgDefFile>true</GeneratePkgDefFile>
+		<CopyVsixExtensionLocation></CopyVsixExtensionLocation>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectCapability Include="CreateVsixContainer" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.LanguageServices" Version="4.14.0" />
+		<PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.14.40265" ExcludeAssets="runtime" />
+		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="18.8.739" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AbpCodePowerTools.CodeAnalysis\AbpCodePowerTools.CodeAnalysis.csproj" />
+		<ProjectReference Include="..\AbpCodePowerTools.Common\AbpCodePowerTools.Common.csproj" />
+		<ProjectReference Include="..\AbpCodePowerTools.Model\AbpCodePowerTools.Model.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Design" />
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
 	<ItemGroup>
 		<VSCTCompile Include="AbpCodePowerToolsPackage.vsct">
 			<ResourceName>Menus.ctmenu</ResourceName>
 			<Generator>VsctGenerator</Generator>
 		</VSCTCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<!-- 递归包含输出目录全部文件，全部打进vsix包 -->
+		<Content Include="$(SolutionDir)AbpCodePowerTools.UI\bin\$(Configuration)\*\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
 	</ItemGroup>
 </Project>

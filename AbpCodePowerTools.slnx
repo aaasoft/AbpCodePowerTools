@@ -4,6 +4,7 @@
   <Project Path="AbpCodePowerTools.Model/AbpCodePowerTools.Model.csproj" />
   <Project Path="AbpCodePowerTools.UI/AbpCodePowerTools.UI.csproj" />
   <Project Path="AbpCodePowerTools/AbpCodePowerTools.csproj" Id="ea08bdae-b23e-42dd-bcce-8b935722acf9">
+    <BuildDependency Project="AbpCodePowerTools.UI/AbpCodePowerTools.UI.csproj" />
     <Deploy />
   </Project>
 </Solution>
