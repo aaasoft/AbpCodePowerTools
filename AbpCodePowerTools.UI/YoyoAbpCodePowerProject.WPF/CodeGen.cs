@@ -184,14 +184,6 @@ public static class CodeGen
 		{
 			return GenAbpZeroCodeTemplate.GetMoonsXStCodeTemplates(dto);
 		}
-		if (Global.MainViewModel.MainExtendedCfg.IsGctMedProNdo)
-		{
-			return GenMedProNdoCodeTemplate.GetGctMedProNdoCodeTemplates(dto);
-		}
-		if (Global.MainViewModel.MainExtendedCfg.IsGctMedProRdo)
-		{
-			return GenMedProRdoCodeTemplate.GetGctMedProRdoCodeTemplates(dto);
-		}
 		return Gen52AbpProCodeTemplate.Get52abpDefaultCodeTemplates(dto);
 	}
 }

@@ -1,7 +1,0 @@
-@using YoyoSoft.AbpDtoGenerator.HtmlControlNames
-@model AbpDtoGenerator.GeneratorModels.ViewModel
-@{
-    var data = Model.SPAClient;
-    var editCheckedDto = data.GetEditCheckedDtoFields();
-
-}

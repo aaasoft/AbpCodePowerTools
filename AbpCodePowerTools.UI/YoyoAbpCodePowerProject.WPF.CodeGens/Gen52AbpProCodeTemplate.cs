@@ -82,11 +82,6 @@ public static class Gen52AbpProCodeTemplate
 		}
 		string buildPath2 = Path.Combine(Global.SolutionInfo.EF.BasePath, "EntityMapper", entity.Name + "s", entity.Name + "Cfg.cs");
 		list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\Server\\EntityFrameworkCore\\EntityMapper\\EntityCfg.txt"), buildPath2));
-		if (option.UseXUnitTests && Global.SolutionInfo.Tests != null)
-		{
-			string buildPath3 = Path.Combine(Global.SolutionInfo.Tests.BasePath, entity.Name + "s", entity.Name + "AppService_Tests.cs");
-			list.Add(CodeTemplateInfo.Create(CodeTemplateType.Server, Path.Combine(templateBasePath, "Templates\\Server\\Tests\\EntityAppService_Tests.txt"), buildPath3));
-		}
 		if (option.InitGeneratorCode)
 		{
 			string basePath3 = Global.SolutionInfo.Application.BasePath;

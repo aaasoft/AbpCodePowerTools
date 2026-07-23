@@ -19,8 +19,6 @@ public class BasicOptionCfg : BaseViewModel
 
 	private bool useDomainManagerCode;
 
-	private bool useXUnitTests;
-
 	private bool isRepositoryExtendCode;
 
 	private bool _initGeneratorCode;
@@ -123,20 +121,6 @@ public class BasicOptionCfg : BaseViewModel
 		}
 	}
 
-	public bool UseXUnitTests
-	{
-		get
-		{
-			return useXUnitTests;
-		}
-		set
-		{
-			useXUnitTests = value;
-			CheckIsAllGeneratorCode();
-			InvokePropertyChanged("UseXUnitTests");
-		}
-	}
-
 	public bool IsRepositoryExtendCode
 	{
 		get
@@ -189,18 +173,16 @@ public class BasicOptionCfg : BaseViewModel
 		useDomainManagerCode = isAllGeneratorCode;
 		useApplicationServiceCode = isAllGeneratorCode;
 		useNgZorro = isAllGeneratorCode;
-		useXUnitTests = isAllGeneratorCode;
 		InvokePropertyChanged("IsAllGeneratorCode");
 		InvokePropertyChanged("UseDomainAuthorizeCode");
 		InvokePropertyChanged("UseDomainManagerCode");
 		InvokePropertyChanged("UseApplicationServiceCode");
 		InvokePropertyChanged("UseNgZorro");
-		InvokePropertyChanged("UseXUnitTests");
 	}
 
 	private void CheckIsAllGeneratorCode()
 	{
-		isAllGeneratorCode = useDomainAuthorizeCode && useDomainManagerCode && useApplicationServiceCode && useNgZorro && useXUnitTests;
+		isAllGeneratorCode = useDomainAuthorizeCode && useDomainManagerCode && useApplicationServiceCode && useNgZorro;
 		InvokePropertyChanged("IsAllGeneratorCode");
 	}
 
